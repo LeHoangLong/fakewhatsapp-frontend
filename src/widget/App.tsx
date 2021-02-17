@@ -8,6 +8,7 @@ import { BaseAction } from "../actions/BaseActions";
 import { UserDispatcher } from "../dispatcher/UserDispatcher";
 import { OperationStatus } from "../state/OperationState";
 import { LoadingIcon } from "./LoadingIcon";
+import { LoginPage } from "./LoginPage";
 
   
 interface AppProps {
@@ -36,7 +37,10 @@ export const App = () => {
         return (
             <HashRouter>
                 <Switch>
-                    <Route path="/login">Login</Route>
+                    <Route path="/login">
+                        <LoginPage></LoginPage>
+                    </Route>
+                    <Route path="/sign-up"></Route>
                     <Route path="/">Hello</Route>
                 </Switch>
             </HashRouter>

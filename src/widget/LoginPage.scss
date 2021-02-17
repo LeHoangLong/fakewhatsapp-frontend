@@ -1,0 +1,73 @@
+@import '../style.scss';
+
+.login-page {
+    background-color: $main-background-color;
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    .body {
+        flex-grow: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        .form {
+            background-color: white;
+            flex-grow: 1;
+            max-width: 500px;
+            padding: $p2;
+            box-shadow: 10px 15px 50px 2px $shadow-color;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            .title {
+                @include h2;
+                color: $secondary-color;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-bottom: $m3;
+            }
+            .input-container {
+                color: $on-main-color;
+                display: flex;
+                flex-direction: column;
+                margin-bottom: $m3;
+                width: 100%;
+                label {
+                    @include h3;
+                    color: $secondary-color;
+                    margin-bottom: $m6;
+                    margin-top: $m6;
+                }
+                input {
+                    @include h4;
+                    border: 2px solid $border-color;
+                    border-radius: $input-border-radius;
+                    padding: $p6;
+                    outline: none;
+                }
+            }
+            .sign-up-link-container {
+                margin-bottom: $m3;
+                .sign-up-link {
+                    @include body-1;
+                    text-decoration: none;
+                    color: $link-color;
+                    &:hover {
+                        color: $hover-link-color;
+                    }
+                }
+            }
+            .login-button {
+                @include h3;
+                @include primary-button;
+                width: 80%;
+            }
+        }
+    }
+}
