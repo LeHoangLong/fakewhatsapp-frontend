@@ -26,6 +26,7 @@ export const App = () => {
     let {userState} = useSelector<AppState, AppProps>(mapStateToProps);
 
     useEffect(() => {
+        console.log('new user state');
         appController.onUserStateChanged(userState);
     }, [userState, appController]);
 
@@ -35,7 +36,7 @@ export const App = () => {
         return (
             <HashRouter>
                 <Switch>
-                    <Route path="/login"></Route>
+                    <Route path="/login">Login</Route>
                     <Route path="/">Hello</Route>
                 </Switch>
             </HashRouter>

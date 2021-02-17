@@ -1,9 +1,9 @@
 export enum OperationStatus {
-    INIT,
-    IN_PROGRESS,
-    SUCCESS,
-    ERROR,
-    IDLE,
+    INIT = "INIT",
+    IN_PROGRESS = "IN_PROGRESS",
+    SUCCESS = "SUCCESS",
+    ERROR = "ERROR",
+    IDLE = "IDLE",
 }
 
 export class OperationState {

@@ -14,6 +14,7 @@ export class AppController {
     } 
     
     onUserStateChanged(userState: UserState) {
+        console.log("on user state change: " + userState.operationState.status);
         switch (userState.operationState.status) {
             case OperationStatus.INIT:
                 //on start up, fetch user data (username for now)
@@ -22,10 +23,15 @@ export class AppController {
             case OperationStatus.SUCCESS:
                 //Some operation just succeed, check the status and redirect accordingly
                 if (userState.status === UserStatus.LOGGED_IN) {
-                    window.location.href = "";
+                    window.location.hash = "";
                 } else {
-                    window.location.href = "/login";
+                    window.location.hash = "/login";
                 }
+                break;
+            case OperationStatus.ERROR:
+                //since we cannot get any user info, redirect to login page seems
+                //the approriate case here
+                window.location.hash = "/login";
                 break;
             default:
                 break;
