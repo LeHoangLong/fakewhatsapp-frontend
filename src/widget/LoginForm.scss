@@ -1,0 +1,5 @@
+@import './LoginPage.scss';
+
+.login-form {
+    @include form-template;
+}

@@ -1,10 +1,5 @@
 @import '../style.scss';
 
-.loading-icon-container {
-    height: 100vh;
-    width: 100vw;
-}
-
 .login-page {
     background-color: $main-background-color;
     width: 100vw;
@@ -22,65 +17,85 @@
         width: 100%;
         .form {
             background-color: white;
-            flex-grow: 1;
-            max-width: 500px;
-            padding: $p2;
             box-shadow: 10px 15px 50px 2px $shadow-color;
+            overflow-x: hidden;
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            .title {
-                @include h2;
-                color: $secondary-color;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                margin-bottom: $m3;
-            }
-            .input-container {
-                color: $on-main-color;
-                display: flex;
-                flex-direction: column;
-                margin-bottom: $m3;
-                width: 100%;
-                label {
-                    @include h3;
-                    color: $secondary-color;
-                    margin-bottom: $m6;
-                    margin-top: $m6;
-                }
-                input {
-                    @include h4;
-                    border: 2px solid $border-color;
-                    border-radius: $input-border-radius;
-                    padding: $p6;
-                    outline: none;
-                }
-            }
-            .error-text-hidden {
-                display: none;
-            }
-            .error-text-shown {
-                @include body-1;
-                color: $error-text-color;
-                margin-bottom: $m3;
-            }
-            .sign-up-link-container {
-                margin-bottom: $m3;
-                .sign-up-link {
-                    @include body-1;
-                    text-decoration: none;
-                    color: $link-color;
-                    &:hover {
-                        color: $hover-link-color;
-                    }
-                }
-            }
-            .login-button {
-                @include h3;
-                @include primary-button;
-                width: 80%;
+            flex-basis: 500px;
+            max-width: 500px;
+            .form-container {
+                min-width: 100%;
+                max-width: 100%;
+                min-height: 60%;
+                max-height: 60%;
             }
         }
+    }
+}
+
+@mixin form-template {
+    box-sizing: border-box;
+    padding: $p2; //intentionally use p2
+    display: flex;
+    min-width: 100%;
+    max-width: 100%;
+    left: 0px;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    .title {
+        @include h2;
+        color: $secondary-color;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: $m3;
+    }
+    .input-container {
+        color: $on-main-color;
+        display: flex;
+        flex-direction: column;
+        margin-bottom: $m3;
+        width: 100%;
+        label {
+            @include h3;
+            color: $secondary-color;
+            margin-bottom: $m6;
+            margin-top: $m6;
+        }
+        input {
+            @include h4;
+            border: 2px solid $border-color;
+            border-radius: $input-border-radius;
+            padding: $p6;
+            outline: none;
+        }
+    }
+    .error-text-hidden {
+        display: none;
+    }
+    .error-text-shown {
+        @include body-1;
+        color: $error-text-color;
+        margin-bottom: $m3;
+    }
+    .link-container {
+        margin-bottom: $m3;
+        .link {
+            @include body-1;
+            text-decoration: none;
+            color: $link-color;
+            background-color: transparent;
+            border: 0px transparent;
+            outline: none;
+            cursor: pointer;
+            &:hover {
+                color: $hover-link-color;
+            }
+        }
+    }
+    .login-button {
+        @include h3;
+        @include primary-button;
+        width: 80%;
     }
 }

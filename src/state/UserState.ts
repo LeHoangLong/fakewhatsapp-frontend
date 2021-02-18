@@ -1,6 +1,7 @@
 import { User } from "../model/UserModel";
 
 export enum UserStatus {
+    INIT,
     LOGGED_IN,
     LOGGED_OUT,
     NOT_LOGGED_IN

@@ -10,8 +10,9 @@ import { UserStatus } from "../state/UserState";
 import { IUserDispatcher } from "./IUserDispatcher";
 
 export enum ELoginErrorDetailMessage {
-    INVALID_CREDENTIALS = "INVALID_CREDENTIALS",
+    INVALID_CREDENTIALS = "Username or password not found",
     GENERIC_ERROR = "GENERIC_ERROR",
+    USERNAME_ALREADY_EXISTS = "Username already exists"
 }
 
 export class UserDispatcher implements IUserDispatcher {
@@ -43,12 +44,8 @@ export class UserDispatcher implements IUserDispatcher {
                 username: username,
                 password: password,
             });
-            //success, refetch the user
-            await this.dispatchGetUserInfo();
             this.dispatch(new OperationStatusActionSetStatus(EOperationType.LOG_IN, EOperationStatus.SUCCESS).toPlainObject());
         } catch (error) {
-            console.log('error');
-            console.log(error.response);
             if (error.response.status === 403) {
                 this.dispatch(new OperationStatusActionSetStatus(EOperationType.LOG_IN, EOperationStatus.ERROR, new BaseOperationStatusDetail(ELoginErrorDetailMessage.INVALID_CREDENTIALS)).toPlainObject());
             } else {
@@ -57,5 +54,25 @@ export class UserDispatcher implements IUserDispatcher {
             throw error;
         }
         this.dispatch(new OperationStatusActionSetStatus(EOperationType.LOG_IN, EOperationStatus.IDLE).toPlainObject());
+    }
+
+    async dispatchSignUp(username: string, password: string) {
+        this.dispatch(new OperationStatusActionSetStatus(EOperationType.SIGN_UP, EOperationStatus.IN_PROGRESS).toPlainObject());
+        try {
+            await axios.post(`${config.BACKEND_URL}/user/signup`, {
+                username: username,
+                password: password,
+            });
+            this.dispatch(new OperationStatusActionSetStatus(EOperationType.SIGN_UP, EOperationStatus.SUCCESS).toPlainObject());
+        } catch (error) {
+            if (error.response.status === 403) {
+                //403 means user already exists
+                this.dispatch(new OperationStatusActionSetStatus(EOperationType.SIGN_UP, EOperationStatus.ERROR, new BaseOperationStatusDetail(ELoginErrorDetailMessage.USERNAME_ALREADY_EXISTS)).toPlainObject());
+            } else {
+                this.dispatch(new OperationStatusActionSetStatus(EOperationType.SIGN_UP, EOperationStatus.ERROR, new BaseOperationStatusDetail(ELoginErrorDetailMessage.GENERIC_ERROR)).toPlainObject());
+            }
+            throw error;
+        }
+        this.dispatch(new OperationStatusActionSetStatus(EOperationType.SIGN_UP, EOperationStatus.IDLE).toPlainObject());
     }
 }

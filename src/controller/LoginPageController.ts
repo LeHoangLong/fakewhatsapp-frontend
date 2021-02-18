@@ -12,16 +12,14 @@ export class LoginPageController {
     }
 
     async onLogin(username: string, password: string) {
-        try {
-            await this.dispatcher.dispatchLogin(username, password);
-            await this.dispatcher.dispatchGetUserInfo();
-        } catch (err) {
-
-        }
+        await this.dispatcher.dispatchLogin(username, password);
+        await this.dispatcher.dispatchGetUserInfo();
     }
 
-    onGetUserInfoOperationStatusChanged(operationStatus: EOperationStatus, userState: UserState) {
-        this.userLoginStatusController.onGetUserInfoOperationStatusChanged(operationStatus, userState);
+    async onSignup(username: string, password: string) {
+        await this.dispatcher.dispatchSignUp(username, password);
+        await this.dispatcher.dispatchGetUserInfo();
+
     }
 
     onUserStateChanged(userState: UserState) {

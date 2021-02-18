@@ -7,6 +7,7 @@ import { AppState } from "../state/AppState";
 import { EOperationStatus, OperationStatus } from "../state/OperationStatusState";
 import { UserState } from "../state/UserState";
 import { LoadingIcon } from "./LoadingIcon";
+import './MainPage.scss';
 
 interface MainPageProps {
     userState: UserState,
@@ -43,7 +44,11 @@ export const MainPage = () => {
     }, [getUserInfoOperationStatus, loginOperationStatus])
 
     if (isLoading) {
-        return <LoadingIcon></LoadingIcon>
+        return (
+            <div className="main-page">
+                <LoadingIcon></LoadingIcon>
+            </div>
+        );
     } else {
         return (
             <div>Hello</div>

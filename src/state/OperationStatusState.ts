@@ -1,6 +1,7 @@
 export enum EOperationType {
     GET_USER_INFO,
-    LOG_IN
+    LOG_IN,
+    SIGN_UP,
 }
 
 export enum EOperationStatus {
@@ -32,9 +33,11 @@ export const initialOperationStatus = new OperationStatus(EOperationStatus.INIT)
 export class OperationStatusState {
     readonly getUserInfoStatus: OperationStatus;
     readonly loginStatus: OperationStatus;
+    readonly signupStatus: OperationStatus;
 
-    constructor(getUserInfoStatus: OperationStatus, loginStatus: OperationStatus) {
+    constructor(getUserInfoStatus: OperationStatus, loginStatus: OperationStatus, signupStatus: OperationStatus) {
         this.getUserInfoStatus = getUserInfoStatus;
         this.loginStatus = loginStatus;
+        this.signupStatus = signupStatus;
     }
 }

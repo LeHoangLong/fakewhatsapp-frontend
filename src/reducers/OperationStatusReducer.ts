@@ -4,7 +4,8 @@ import { EOperationStatusActionTypes, OperationStatusActionSetStatus } from '../
 
 export const initialOperationStatusState = new OperationStatusState(
     initialOperationStatus,
-    initialOperationStatus
+    initialOperationStatus,
+    initialOperationStatus,
 );
 
 export function operationStatusReducer(state: OperationStatusState, action: BaseAction): OperationStatusState {
@@ -15,11 +16,19 @@ export function operationStatusReducer(state: OperationStatusState, action: Base
                 case EOperationType.GET_USER_INFO:
                     return new OperationStatusState(
                         operationStatusAction.operationState,
-                        state.loginStatus
+                        state.loginStatus,
+                        state.signupStatus,
                     )
                 case EOperationType.LOG_IN:
                     return new OperationStatusState(
                         state.getUserInfoStatus,
+                        operationStatusAction.operationState,
+                        state.signupStatus,
+                    )
+                case EOperationType.SIGN_UP:
+                    return new OperationStatusState(
+                        state.getUserInfoStatus,
+                        state.loginStatus,
                         operationStatusAction.operationState,
                     )
                 default:

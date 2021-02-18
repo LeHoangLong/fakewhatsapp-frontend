@@ -2,7 +2,7 @@ import { BaseAction } from "../actions/BaseActions";
 import { EUserActionTypes, UserActionSetLoginStatus, UserActionSetUser } from "../actions/UserActions";
 import { UserState, UserStatus } from "../state/UserState";
 
-export const initialUserState: UserState = new UserState(UserStatus.NOT_LOGGED_IN);
+export const initialUserState: UserState = new UserState(UserStatus.INIT);
 
 export function userReducer(userState: UserState = initialUserState, action: BaseAction): UserState {
     switch (action.type) {

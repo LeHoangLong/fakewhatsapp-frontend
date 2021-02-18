@@ -5,7 +5,7 @@ export interface LoadingIconProps {
     sizePx?: number;
 }
 
-export const LoadingIcon = ({ sizePx = 24 }: LoadingIconProps) => {
+export const LoadingIcon = ({ sizePx = 50 }: LoadingIconProps) => {
     return (
         <div className="loading-icon-container">
             <svg height={sizePx} width={sizePx}>

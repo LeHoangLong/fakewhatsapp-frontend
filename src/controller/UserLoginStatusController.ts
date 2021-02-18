@@ -8,29 +8,25 @@ export class UserLoginStatusController {
         this.dispatcher = dispatcher;
     } 
 
-    onGetUserInfoOperationStatusChanged(operationStatus: EOperationStatus, userState: UserState) {
-        switch (operationStatus) {
-            case EOperationStatus.INIT:
-                //on init, we check if user is not logged in yet
-                //if not, we attempt to fetch info to see if we are logged in
-                if (userState.status !== UserStatus.LOGGED_IN) {
-                    this.dispatcher.dispatchGetUserInfo();
-                }
-                break;
-            default:
-                //do nothing
-                break;
-        }
-    }
-    
     onUserStateChanged(userState: UserState) {
         switch (userState.status) {
+            case UserStatus.INIT:
+                //on init, we check if user is not logged in yet
+                //if not, we attempt to fetch info to see if we are logged in
+                this.dispatcher.dispatchGetUserInfo();
+                break;
             case UserStatus.LOGGED_IN:
+                console.log("user logged in");
                 window.location.hash = "";
                 break;
             case UserStatus.NOT_LOGGED_IN: //intentional fall through
             case UserStatus.LOGGED_OUT:
-                window.location.hash = "/login";
+                let hash = window.location.hash;
+                console.log(hash.match(/^\/login.*/) === null);
+                if (hash.match(/^\/login.*/) === null) {
+                    //only redirect if we are not in log in or sign up page
+                    window.location.hash = "/login";
+                }
                 break;
             default:
                 break;
