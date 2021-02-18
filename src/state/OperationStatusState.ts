@@ -1,7 +1,7 @@
 export enum EOperationType {
-    GET_USER_INFO,
-    LOG_IN,
-    SIGN_UP,
+    GET_USER_INFO = "GET_USER_INFO",
+    LOG_IN = "LOG_IN",
+    SIGN_UP = "SIGN_UP",
 }
 
 export enum EOperationStatus {
@@ -34,10 +34,12 @@ export class OperationStatusState {
     readonly getUserInfoStatus: OperationStatus;
     readonly loginStatus: OperationStatus;
     readonly signupStatus: OperationStatus;
+    readonly redirectStatus: OperationStatus;
 
-    constructor(getUserInfoStatus: OperationStatus, loginStatus: OperationStatus, signupStatus: OperationStatus) {
+    constructor(getUserInfoStatus: OperationStatus, loginStatus: OperationStatus, signupStatus: OperationStatus, redirectStatus: OperationStatus) {
         this.getUserInfoStatus = getUserInfoStatus;
         this.loginStatus = loginStatus;
         this.signupStatus = signupStatus;
+        this.redirectStatus = redirectStatus;
     }
 }

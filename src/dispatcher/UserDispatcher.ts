@@ -37,13 +37,14 @@ export class UserDispatcher implements IUserDispatcher {
         this.dispatch(new OperationStatusActionSetStatus(EOperationType.GET_USER_INFO, EOperationStatus.IDLE).toPlainObject());
     }
 
-    async dispatchLogin(username: string, password: string) {
+    async dispatchLoginAndGetUserInfo(username: string, password: string) {
         this.dispatch(new OperationStatusActionSetStatus(EOperationType.LOG_IN, EOperationStatus.IN_PROGRESS).toPlainObject());
         try {
             await axios.post(`${config.BACKEND_URL}/user/login`, {
                 username: username,
                 password: password,
             });
+            await this.dispatchGetUserInfo();
             this.dispatch(new OperationStatusActionSetStatus(EOperationType.LOG_IN, EOperationStatus.SUCCESS).toPlainObject());
         } catch (error) {
             if (error.response.status === 403) {
@@ -56,13 +57,14 @@ export class UserDispatcher implements IUserDispatcher {
         this.dispatch(new OperationStatusActionSetStatus(EOperationType.LOG_IN, EOperationStatus.IDLE).toPlainObject());
     }
 
-    async dispatchSignUp(username: string, password: string) {
+    async dispatchSignUpAndGetUserInfo(username: string, password: string) {
         this.dispatch(new OperationStatusActionSetStatus(EOperationType.SIGN_UP, EOperationStatus.IN_PROGRESS).toPlainObject());
         try {
             await axios.post(`${config.BACKEND_URL}/user/signup`, {
                 username: username,
                 password: password,
             });
+            await this.dispatchGetUserInfo();
             this.dispatch(new OperationStatusActionSetStatus(EOperationType.SIGN_UP, EOperationStatus.SUCCESS).toPlainObject());
         } catch (error) {
             if (error.response.status === 403) {

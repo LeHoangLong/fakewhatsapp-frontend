@@ -6,6 +6,7 @@ export const initialOperationStatusState = new OperationStatusState(
     initialOperationStatus,
     initialOperationStatus,
     initialOperationStatus,
+    initialOperationStatus,
 );
 
 export function operationStatusReducer(state: OperationStatusState, action: BaseAction): OperationStatusState {
@@ -18,18 +19,21 @@ export function operationStatusReducer(state: OperationStatusState, action: Base
                         operationStatusAction.operationState,
                         state.loginStatus,
                         state.signupStatus,
+                        state.redirectStatus,
                     )
                 case EOperationType.LOG_IN:
                     return new OperationStatusState(
                         state.getUserInfoStatus,
                         operationStatusAction.operationState,
                         state.signupStatus,
+                        state.redirectStatus,
                     )
                 case EOperationType.SIGN_UP:
                     return new OperationStatusState(
                         state.getUserInfoStatus,
                         state.loginStatus,
                         operationStatusAction.operationState,
+                        state.redirectStatus,
                     )
                 default:
                     return state;

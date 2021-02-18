@@ -1,5 +1,5 @@
 export interface IUserDispatcher {
     dispatchGetUserInfo(): Promise<void>;
-    dispatchLogin(username: string, password: string): Promise<void>;
-    dispatchSignUp(username: string, password: string): Promise<void>;
+    dispatchLoginAndGetUserInfo(username: string, password: string): Promise<void>;
+    dispatchSignUpAndGetUserInfo(username: string, password: string): Promise<void>;
 }

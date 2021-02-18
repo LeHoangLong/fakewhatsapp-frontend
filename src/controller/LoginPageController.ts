@@ -1,28 +1,23 @@
 import { IUserDispatcher } from "../dispatcher/IUserDispatcher";
-import { EOperationStatus } from "../state/OperationStatusState";
-import { UserState } from "../state/UserState";
-import { UserLoginStatusController } from "./UserLoginStatusController";
+import { UserState, UserStatus } from "../state/UserState";
 
 export class LoginPageController {
-    userLoginStatusController: UserLoginStatusController;
     dispatcher: IUserDispatcher;
     constructor(dispatcher: IUserDispatcher) {
         this.dispatcher = dispatcher;
-        this.userLoginStatusController = new UserLoginStatusController(dispatcher);
     }
 
     async onLogin(username: string, password: string) {
-        await this.dispatcher.dispatchLogin(username, password);
-        await this.dispatcher.dispatchGetUserInfo();
+        await this.dispatcher.dispatchLoginAndGetUserInfo(username, password);
     }
 
     async onSignup(username: string, password: string) {
-        await this.dispatcher.dispatchSignUp(username, password);
-        await this.dispatcher.dispatchGetUserInfo();
-
+        await this.dispatcher.dispatchSignUpAndGetUserInfo(username, password);
     }
 
     onUserStateChanged(userState: UserState) {
-        this.userLoginStatusController.onUserStateChanged(userState);
+        if (userState.status === UserStatus.INIT) {
+            this.dispatcher.dispatchGetUserInfo();
+        }
     }
 }

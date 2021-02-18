@@ -5,7 +5,6 @@ import { UserDispatcher } from '../dispatcher/UserDispatcher';
 import { AppState } from '../state/AppState';
 import { EOperationStatus, OperationStatus } from '../state/OperationStatusState';
 import { UserState } from '../state/UserState';
-import { LoadingIcon } from './LoadingIcon';
 import { LoginForm } from './LoginForm';
 import './LoginPage.scss';
 import { SignupForm } from './SignupForm';
@@ -13,21 +12,37 @@ import { SignupForm } from './SignupForm';
 interface LoginPageProps {
     userState: UserState,
     getUserInfoOperationStatus: OperationStatus,
+    loginOperationStatus: OperationStatus,
+    signupOperationStatus: OperationStatus,
 }
 
 
 export const LoginPage = () => {
+    let [isLoading, setIsLoading] = useState(false);
     const loginFormRef = useRef<HTMLInputElement>(null);
     const signUpFormRef = useRef<HTMLInputElement>(null);
     let dispatch = useDispatch();
     let userDispatcher: UserDispatcher = useRef(new UserDispatcher(dispatch)).current;
     let loginPageController = useRef(new LoginPageController(userDispatcher)).current;
-    const {userState, getUserInfoOperationStatus} = useSelector<AppState, LoginPageProps>((state): LoginPageProps => {
+    const {userState, getUserInfoOperationStatus, loginOperationStatus, signupOperationStatus} = useSelector<AppState, LoginPageProps>((state): LoginPageProps => {
         return {
             userState: state.userState,
-            getUserInfoOperationStatus: state.operationStatusState.getUserInfoStatus
+            getUserInfoOperationStatus: state.operationStatusState.getUserInfoStatus,
+            loginOperationStatus: state.operationStatusState.loginStatus,
+            signupOperationStatus: state.operationStatusState.signupStatus,
         }
     });
+
+    useEffect(() => {
+        if (getUserInfoOperationStatus.status === EOperationStatus.INIT ||
+            getUserInfoOperationStatus.status === EOperationStatus.IN_PROGRESS ||
+            loginOperationStatus.status === EOperationStatus.IN_PROGRESS ||
+            signupOperationStatus.status === EOperationStatus.IN_PROGRESS) {
+            setIsLoading(true);
+        } else {
+            setIsLoading(false);
+        }
+    }, [loginOperationStatus, getUserInfoOperationStatus, signupOperationStatus]);
 
     useEffect(() => {
         loginPageController.onUserStateChanged(userState)
@@ -64,10 +79,10 @@ export const LoginPage = () => {
             <div className="body">
                 <div className="form">
                     <div className="form-container" ref={loginFormRef}>
-                        <LoginForm onGoToSignupPage={onSignupLinkClicked} onLogin={onLoginButtonClickHandler}></LoginForm>
+                        <LoginForm isLoading={isLoading} onGoToSignupPage={onSignupLinkClicked} onLogin={onLoginButtonClickHandler}></LoginForm>
                     </div>
                     <div className="form-container" ref={signUpFormRef}>
-                        <SignupForm onGoToLoginPage={onLoginLinkClicked} onSignup={onSignupHandler}></SignupForm>
+                        <SignupForm isLoading={isLoading} onGoToLoginPage={onLoginLinkClicked} onSignup={onSignupHandler}></SignupForm>
                     </div>
                 </div>
             </div>

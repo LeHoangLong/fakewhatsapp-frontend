@@ -9,22 +9,20 @@ import "./LoginForm.scss"
 export interface LoginFormProps {
     onLogin(username: string, password: string): void,
     onGoToSignupPage(): void,
+    isLoading: boolean,
 }
 
 interface LoginFormStoreProps {
     loginOperationStatus: OperationStatus,
-    getUserOperationStatus: OperationStatus,
 }
 
-export const LoginForm = ({onLogin, onGoToSignupPage}: LoginFormProps) => {
+export const LoginForm = ({onLogin, onGoToSignupPage, isLoading}: LoginFormProps) => {
     let [username, setUsername] = useState('');
     let [password, setPassword] = useState('');
     let [errorTextClass, setErrorTextClass] = useState('error-text-hidden');
     let [errorText, setErrorText] = useState('');
-    let [isLoading, setIsLoading] = useState(true);
-    const {loginOperationStatus, getUserOperationStatus} = useSelector<AppState, LoginFormStoreProps>((state): LoginFormStoreProps => ({
+    const {loginOperationStatus } = useSelector<AppState, LoginFormStoreProps>((state): LoginFormStoreProps => ({
         loginOperationStatus: state.operationStatusState.loginStatus,
-        getUserOperationStatus: state.operationStatusState.getUserInfoStatus
     }));
 
     function onUsernameChanged(event: React.ChangeEvent<HTMLInputElement>) {
@@ -46,17 +44,6 @@ export const LoginForm = ({onLogin, onGoToSignupPage}: LoginFormProps) => {
             setErrorText(loginOperationStatus.detail.description);      
         }
     }, [loginOperationStatus]);
-
-    useEffect(() => {
-        if (getUserOperationStatus.status === EOperationStatus.INIT ||
-            getUserOperationStatus.status === EOperationStatus.IN_PROGRESS ||
-            loginOperationStatus.status === EOperationStatus.IN_PROGRESS) {
-            setIsLoading(true);
-        } else {
-            setIsLoading(false);
-        }
-    }, [loginOperationStatus, getUserOperationStatus]);
-
     
     return (
         <div className="login-form">
