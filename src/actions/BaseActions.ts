@@ -1,10 +1,10 @@
 export class BaseAction {
-    readonly type: string;
-    constructor(type: string) {
+    readonly type: Symbol;
+    constructor(type: Symbol) {
         this.type = type;
-    } 
+    }
 
-    toPlainObject(): BaseAction {
+    toPlainObject() : BaseAction {
         return Object.assign({}, this);
     }
 }

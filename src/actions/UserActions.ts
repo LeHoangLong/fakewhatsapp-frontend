@@ -1,34 +1,24 @@
 import { User } from "../model/UserModel";
-import { OperationState, OperationStatus } from "../state/OperationState";
 import { UserStatus } from "../state/UserState";
 import { BaseAction } from "./BaseActions";
 
-export enum EUserActionTypes {
-    eSetOperationStatus = "eUserActionTypesSetOperationStatus",
-    eSetUser = "eUserActionTypesSetUser",
-    eSetUserLoginStatus = "eUserActionTypesSetUserLoginStatus",
+export const EUserActionTypes = {
+    SET_USER: Symbol("SET_OPERATION_STATUS"),
+    SET_USER_LOGIN_STATUS: Symbol("SET_OPERATION_STATUS"),
 }
 
-export class UserSetOperationStatusAction extends BaseAction {
-    readonly operationState: OperationState;
-    constructor(status: OperationStatus, detail?: any) {
-        super(EUserActionTypes.eSetOperationStatus);
-        this.operationState = new OperationState(status, detail);
-    }
-}
-
-export class UserSetLoginStatusAction extends BaseAction {
+export class UserActionSetLoginStatus extends BaseAction {
     readonly userStatus: UserStatus;
     constructor(userStatus: UserStatus) {
-        super(EUserActionTypes.eSetUserLoginStatus);
+        super(EUserActionTypes.SET_USER_LOGIN_STATUS);
         this.userStatus = userStatus;
     }
 }
 
-export class UserSetUserAction extends BaseAction {
+export class UserActionSetUser extends BaseAction {
     readonly user: User;
     constructor(user: User) {
-        super(EUserActionTypes.eSetUser);
+        super(EUserActionTypes.SET_USER);
         this.user = user;
     }
 }
