@@ -1,5 +1,10 @@
 @import '../style.scss';
 
+.loading-icon-container {
+    height: 100vh;
+    width: 100vw;
+}
+
 .login-page {
     background-color: $main-background-color;
     width: 100vw;
@@ -51,6 +56,14 @@
                     padding: $p6;
                     outline: none;
                 }
+            }
+            .error-text-hidden {
+                display: none;
+            }
+            .error-text-shown {
+                @include body-1;
+                color: $error-text-color;
+                margin-bottom: $m3;
             }
             .sign-up-link-container {
                 margin-bottom: $m3;

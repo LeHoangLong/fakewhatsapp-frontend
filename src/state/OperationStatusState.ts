@@ -11,10 +11,17 @@ export enum EOperationStatus {
     IDLE = "IDLE",
 }
 
+export class BaseOperationStatusDetail {
+    description: string;
+    constructor(description: string = "") { 
+        this.description = description;
+    }
+}
+
 export class OperationStatus {
     readonly status: EOperationStatus;
-    readonly detail: any;
-    constructor(status: EOperationStatus, detail: any = null) {
+    readonly detail: BaseOperationStatusDetail;
+    constructor(status: EOperationStatus, detail: BaseOperationStatusDetail = new BaseOperationStatusDetail()) {
         this.status = status;
         this.detail = detail;
     }

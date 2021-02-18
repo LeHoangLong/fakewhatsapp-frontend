@@ -5,9 +5,14 @@ import { OperationStatusActionSetStatus } from "../actions/OperationStatusAction
 import { UserActionSetLoginStatus, UserActionSetUser } from "../actions/UserActions";
 import { config } from "../config";
 import { User } from "../model/UserModel";
-import { EOperationStatus, EOperationType } from "../state/OperationStatusState";
+import { BaseOperationStatusDetail, EOperationStatus, EOperationType } from "../state/OperationStatusState";
 import { UserStatus } from "../state/UserState";
 import { IUserDispatcher } from "./IUserDispatcher";
+
+export enum ELoginErrorDetailMessage {
+    INVALID_CREDENTIALS = "INVALID_CREDENTIALS",
+    GENERIC_ERROR = "GENERIC_ERROR",
+}
 
 export class UserDispatcher implements IUserDispatcher {
     dispatch: Dispatch<BaseAction>;
@@ -41,9 +46,15 @@ export class UserDispatcher implements IUserDispatcher {
             //success, refetch the user
             await this.dispatchGetUserInfo();
             this.dispatch(new OperationStatusActionSetStatus(EOperationType.LOG_IN, EOperationStatus.SUCCESS).toPlainObject());
-        } catch (err) {
-            this.dispatch(new OperationStatusActionSetStatus(EOperationType.LOG_IN, EOperationStatus.ERROR).toPlainObject());
-            throw err;
+        } catch (error) {
+            console.log('error');
+            console.log(error.response);
+            if (error.response.status === 403) {
+                this.dispatch(new OperationStatusActionSetStatus(EOperationType.LOG_IN, EOperationStatus.ERROR, new BaseOperationStatusDetail(ELoginErrorDetailMessage.INVALID_CREDENTIALS)).toPlainObject());
+            } else {
+                this.dispatch(new OperationStatusActionSetStatus(EOperationType.LOG_IN, EOperationStatus.ERROR, new BaseOperationStatusDetail(ELoginErrorDetailMessage.GENERIC_ERROR)).toPlainObject());
+            }
+            throw error;
         }
         this.dispatch(new OperationStatusActionSetStatus(EOperationType.LOG_IN, EOperationStatus.IDLE).toPlainObject());
     }
