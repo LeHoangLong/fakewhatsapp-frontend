@@ -1,6 +1,8 @@
 export class User {
-    readonly username: string;
-    constructor(username: string) {
-        this.username = username;
+    readonly name: string;
+    readonly infoId: number;
+    constructor(name: string, infoId: number) {
+        this.name = name;
+        this.infoId = infoId;
     }
 }

@@ -1,0 +1,32 @@
+@import '../style.scss';
+
+.friend-bar {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+    border-right: 1px $border-color solid;
+    .search-bar-container {
+        padding: $p6 $p5;
+        background-color: $secondary-color;
+    }
+    .friend-list {
+        @include myscrollbar;
+        flex-grow: 1;
+        overflow-y: auto;
+        .add-user-text {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: $m3;
+            margin-right: $m3;
+            color: $secondary-color;
+        }
+        .friend-list-loading-icon-container {
+            position: relative;
+            height: 50px;
+            align-items: center;
+        }
+    }
+}

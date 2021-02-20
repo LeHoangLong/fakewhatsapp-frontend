@@ -1,0 +1,24 @@
+@import '../style.scss';
+
+.search-bar {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    border: 1px $border-color solid;
+    border-radius: 500px;
+    padding-left: $p4;
+    padding-right: $p4;
+    box-sizing: border-box;
+    background-color: white;
+    .input-container {
+        flex-grow: 1;
+        input {
+            @include h4;
+            width: 100%;
+            border: 0px;
+            outline: none;
+            padding: $p6;
+            box-sizing: border-box;
+        }
+    }
+}

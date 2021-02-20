@@ -22,6 +22,7 @@ $primary-button-pressed-color: $blue-1;
 $on-primary-button-color: white;
 $error-text-color: red;
 $progress-indicator-color: $blue-3;
+$scrollbar-color: $blue-3;
 
 $input-border-radius: 12px;
 $standard-button-radius: 12px;
@@ -88,5 +89,23 @@ h1 {
     color: $on-primary-button-color;
     &:active {
         background-color: $primary-button-pressed-color;
+    }
+}
+
+@mixin myscrollbar {
+    &:hover {
+        &::-webkit-scrollbar {
+            width: 10px;
+        }
+    }
+
+    &::-webkit-scrollbar {
+        width: 0px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        border-radius: 500px;
+        background-color: $scrollbar-color;
+        width: 5px;
     }
 }

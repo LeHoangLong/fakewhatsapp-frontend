@@ -25,7 +25,7 @@ export class UserDispatcher implements IUserDispatcher {
         this.dispatch(new OperationStatusActionSetStatus(EOperationType.GET_USER_INFO, EOperationStatus.IN_PROGRESS).toPlainObject());
         try {
             let result = await axios.get(`${config.BACKEND_URL}/user/info/`);
-            let user = new User(result.data.username);
+            let user = new User(result.data.name, result.data.infoId);
             this.dispatch(new UserActionSetLoginStatus(UserStatus.LOGGED_IN).toPlainObject());
             this.dispatch(new UserActionSetUser(user).toPlainObject());
             this.dispatch(new OperationStatusActionSetStatus(EOperationType.GET_USER_INFO, EOperationStatus.SUCCESS).toPlainObject());

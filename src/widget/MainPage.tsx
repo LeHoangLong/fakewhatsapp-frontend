@@ -6,6 +6,7 @@ import { UserDispatcher } from "../dispatcher/UserDispatcher";
 import { AppState } from "../state/AppState";
 import { EOperationStatus, OperationStatus } from "../state/OperationStatusState";
 import { UserState } from "../state/UserState";
+import { FriendBar } from "./FriendBar";
 import { LoadingIcon } from "./LoadingIcon";
 import './MainPage.scss';
 
@@ -51,7 +52,11 @@ export const MainPage = () => {
         );
     } else {
         return (
-            <div>Hello</div>
+            <div className="main-page">
+                <div className="friend-bar-container">
+                    <FriendBar></FriendBar>
+                </div>
+            </div>
         )
     }
 }
