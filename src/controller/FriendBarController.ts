@@ -43,8 +43,8 @@ export class FriendBarController {
     }
 
     async onSearchFriendNameChangeHandler(value: string) {
-        this.findFriendsByName(value);
-        this.findUsersByName(value, 0, config.DEFAULT_PAGE_SIZE, EOperationStatus.INIT); //set to init to reset the status because we want to refetch any time a value is changed
+        await this.findFriendsByName(value);
+        await this.findUsersByName(value, 0, config.DEFAULT_PAGE_SIZE, EOperationStatus.INIT); //set to init to reset the status because we want to refetch any time a value is changed
     }
 
     async onLoadingIconShownHandler(searchValue: string, friendState: FriendState, foundUserState: FoundUserState, fetchFriendOperationStatus: OperationStatus, foundUserOperationStatus: OperationStatus) {

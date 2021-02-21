@@ -38,6 +38,7 @@
         .friend-card {
             display: flex;
             align-items: center;
+            cursor: pointer;
             .profile-letter {
                 @include h3;
                 border-radius: 50%;

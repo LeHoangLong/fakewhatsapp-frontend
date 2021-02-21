@@ -12,7 +12,11 @@ import './FriendBar.scss'
 import { LoadingIcon } from './LoadingIcon';
 import { SearchBar } from './SearchBar'
 
-export const FriendBar = () => {
+interface FriendBarProps {
+    onUserSelected(user: User): void;
+}
+
+export const FriendBar = ({onUserSelected}: FriendBarProps) => {
     let friendListRef = useRef(null);
     let loadingIconRef = useRef(null);
     let dispatch = useDispatch();
@@ -156,8 +160,6 @@ export const FriendBar = () => {
             for (let i = 0; i < foundUserState.allUsers.length; i++) {
                 let user: User = foundUserState.allUsers[i];
                 if (!friendState.doesFriendWithInfoIdExists(user.infoId) && user.infoId !== thisUser.infoId) {
-                    console.log(user.infoId);
-                    console.log(thisUser.infoId);
                     usersToShow.push(user);
                 }
             }
@@ -170,7 +172,7 @@ export const FriendBar = () => {
             }
             for (let i = 0; i < usersToShow.length; i++) {
                 ret.push(
-                    <div key={ usersToShow[i].infoId } className="friend-card">
+                    <div key={ usersToShow[i].infoId } className="friend-card" onClick={() => onUserSelected(usersToShow[i])}>
                         <div className="profile-letter">
                             { usersToShow[i].name[0].toUpperCase() }
                         </div>
