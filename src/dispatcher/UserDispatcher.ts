@@ -33,8 +33,9 @@ export class UserDispatcher implements IUserDispatcher {
             this.dispatch(new UserActionSetLoginStatus(UserStatus.NOT_LOGGED_IN).toPlainObject());
             this.dispatch(new OperationStatusActionSetStatus(EOperationType.GET_USER_INFO, EOperationStatus.ERROR).toPlainObject());
             throw err;
+        } finally {
+            this.dispatch(new OperationStatusActionSetStatus(EOperationType.GET_USER_INFO, EOperationStatus.IDLE).toPlainObject());
         }
-        this.dispatch(new OperationStatusActionSetStatus(EOperationType.GET_USER_INFO, EOperationStatus.IDLE).toPlainObject());
     }
 
     async dispatchLoginAndGetUserInfo(username: string, password: string) {
@@ -53,8 +54,9 @@ export class UserDispatcher implements IUserDispatcher {
                 this.dispatch(new OperationStatusActionSetStatus(EOperationType.LOG_IN, EOperationStatus.ERROR, new BaseOperationStatusDetail(ELoginErrorDetailMessage.GENERIC_ERROR)).toPlainObject());
             }
             throw error;
+        } finally {
+            this.dispatch(new OperationStatusActionSetStatus(EOperationType.LOG_IN, EOperationStatus.IDLE).toPlainObject());
         }
-        this.dispatch(new OperationStatusActionSetStatus(EOperationType.LOG_IN, EOperationStatus.IDLE).toPlainObject());
     }
 
     async dispatchSignUpAndGetUserInfo(username: string, password: string) {
@@ -74,7 +76,8 @@ export class UserDispatcher implements IUserDispatcher {
                 this.dispatch(new OperationStatusActionSetStatus(EOperationType.SIGN_UP, EOperationStatus.ERROR, new BaseOperationStatusDetail(ELoginErrorDetailMessage.GENERIC_ERROR)).toPlainObject());
             }
             throw error;
+        } finally {
+            this.dispatch(new OperationStatusActionSetStatus(EOperationType.SIGN_UP, EOperationStatus.IDLE).toPlainObject());
         }
-        this.dispatch(new OperationStatusActionSetStatus(EOperationType.SIGN_UP, EOperationStatus.IDLE).toPlainObject());
     }
 }

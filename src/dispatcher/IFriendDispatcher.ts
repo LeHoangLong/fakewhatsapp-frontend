@@ -1,7 +1,7 @@
-import { Dispatch } from "react";
-import { BaseAction } from "../actions/BaseActions";
+import { User } from "../model/UserModel";
 
 export interface IFriendDispatcher {
-    fetchFriends(offset: number, limit: number, getCount: boolean): Promise<void>;
-    setPage(offset: number, limit: number): void;
+    fetchFriends(offset: number, limit: number): Promise<void>;
+    findFriendByName(name: string, offset: number, limit: number): Promise<User[]>;
+    addFriend(friends: User[]): void;
 }

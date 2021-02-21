@@ -5,10 +5,7 @@ export class FriendStateErrorInfoIdNotFound {}
 export class FriendState {
     constructor(
         public allFriends: readonly User[], 
-        public filteredFriends: readonly User[], 
-        public currentOffset: number, 
-        public currentPageSize: number, 
-        public totalNumberOfFriends: number | null) {
+        public isEndReached: boolean) {
     }
 
     doesFriendWithInfoIdExists(infoId: number): boolean {
