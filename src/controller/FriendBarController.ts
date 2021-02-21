@@ -1,7 +1,6 @@
 import { config } from "../config";
 import { IFoundUserDispatcher } from "../dispatcher/IFoundUserDispatcher";
 import { IFriendDispatcher } from "../dispatcher/IFriendDispatcher";
-import { User } from "../model/UserModel";
 import { FoundUserState } from "../state/FoundUserState";
 import { FriendState } from "../state/FriendState";
 import { EOperationStatus, OperationStatus } from "../state/OperationStatusState";
@@ -27,7 +26,6 @@ export class FriendBarController {
 
     private async findFriendsByName(name: string) {
         if (name !== '') {
-            let ret: User[] = [];
             let offset: number = 0;
             while (true) {
                 let friends = await this.friendDispatcher.findFriendByName(name, offset, 10);

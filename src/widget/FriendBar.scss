@@ -21,12 +21,34 @@
             justify-content: center;
             margin-left: $m3;
             margin-right: $m3;
-            color: $secondary-color;
+            color: $secondary-text-color;
         }
         .friend-list-loading-icon-container {
             position: relative;
             height: 50px;
             align-items: center;
+        }
+        .group-title {
+            @include h4;
+            margin-left: $m5;
+            margin-top: $m5;
+            color: $secondary-text-color;
+            font-weight: 600;
+        }
+        .friend-card {
+            display: flex;
+            align-items: center;
+            .profile-letter {
+                @include h3;
+                border-radius: 50%;
+                background-color: $secondary-color;
+                margin: $m5;
+                height: 50px;
+                width: 50px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
         }
     }
 }

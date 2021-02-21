@@ -29,13 +29,15 @@ export const FriendBar = () => {
     }
 
     interface MapStateToProps {
+        thisUser: User,
         friendState: FriendState,
         fetchFriendOperationStatus: OperationStatus,
         foundUserState: FoundUserState,
         foundUserOperationStatus: OperationStatus,
     }
 
-    const {friendState, fetchFriendOperationStatus, foundUserState,foundUserOperationStatus} = useSelector<AppState, MapStateToProps>((state: AppState): MapStateToProps => ({
+    const {thisUser, friendState, fetchFriendOperationStatus, foundUserState,foundUserOperationStatus} = useSelector<AppState, MapStateToProps>((state: AppState): MapStateToProps => ({
+            thisUser: state.userState.user!,
             friendState: state.friendState,
             fetchFriendOperationStatus: state.operationStatusState.fetchFriendsStatus,
             foundUserState: state.foundUserState,
@@ -102,14 +104,40 @@ export const FriendBar = () => {
     function displayFriends(friendState: FriendState, foundUserState: FoundUserState) {
         let ret = [];
         let friends: User[] = [];
+        if (searchName !== '' && thisUser.name.includes(searchName)) {
+            ret.push(
+                <div key="me-title" className="group-title">
+                    Me
+                </div>
+            )
+            ret.push(
+                <div key={ thisUser.infoId } className="friend-card">
+                    <div className="profile-letter">
+                        { thisUser.name[0].toUpperCase() }
+                    </div>
+                    <div className="name">
+                        { thisUser.name }
+                    </div>
+                </div>
+            )
+        }
+
         if (searchName === '') {
             friends = friendState.allFriends as User[];
         } else {
             for (let i = 0; i < friendState.allFriends.length; i++) {
-                if (friendState.allFriends[i].name.includes(searchName)) {
+                let friend: User = friendState.allFriends[i];
+                if (friend.name.includes(searchName) && friend.infoId !== thisUser.infoId) {
                     friends.push(friendState.allFriends[i]);
                 }
             }
+        }
+        if (friends.length > 0) {
+            ret.push(
+                <div key="friends-title" className="group-title">
+                    Friends
+                </div>
+            )
         }
         for (let i = 0; i < friends.length; i++) {
             ret.push(
@@ -127,9 +155,18 @@ export const FriendBar = () => {
             let usersToShow: User[] = [];
             for (let i = 0; i < foundUserState.allUsers.length; i++) {
                 let user: User = foundUserState.allUsers[i];
-                if (!friendState.doesFriendWithInfoIdExists(user.infoId)) {
+                if (!friendState.doesFriendWithInfoIdExists(user.infoId) && user.infoId !== thisUser.infoId) {
+                    console.log(user.infoId);
+                    console.log(thisUser.infoId);
                     usersToShow.push(user);
                 }
+            }
+            if (usersToShow.length > 0) {
+                ret.push(
+                    <div key="stranger-title" className="group-title">
+                        People
+                    </div>
+                )
             }
             for (let i = 0; i < usersToShow.length; i++) {
                 ret.push(
