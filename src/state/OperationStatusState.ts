@@ -4,6 +4,7 @@ export enum EOperationType {
     SIGN_UP = "SIGN_UP",
     FETCH_FRIENDS = 'FETCH_FRIENDS',
     FIND_USER = 'FIND_USER',
+    FETCH_INVITATION = 'FETCH_INVITATION',
 }
 
 export enum EOperationStatus {
@@ -39,6 +40,7 @@ export class OperationStatusState {
     readonly redirectStatus: OperationStatus;
     readonly fetchFriendsStatus: OperationStatus;
     readonly findUserStatus: OperationStatus;
+    readonly fetchInvitationStatus: OperationStatus;
 
     constructor(
         getUserInfoStatus: OperationStatus, 
@@ -47,6 +49,7 @@ export class OperationStatusState {
         redirectStatus: OperationStatus,
         fetchFriendsStatus: OperationStatus,
         findUserStatus: OperationStatus,
+        fetchInvitationStatus: OperationStatus,
     ) {
         this.getUserInfoStatus = getUserInfoStatus;
         this.loginStatus = loginStatus;
@@ -54,5 +57,6 @@ export class OperationStatusState {
         this.redirectStatus = redirectStatus;
         this.fetchFriendsStatus = fetchFriendsStatus;
         this.findUserStatus = findUserStatus;
+        this.fetchInvitationStatus = fetchInvitationStatus;
     }
 }

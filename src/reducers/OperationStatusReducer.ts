@@ -9,6 +9,7 @@ export const initialOperationStatusState = new OperationStatusState(
     initialOperationStatus,
     initialOperationStatus,
     initialOperationStatus,
+    initialOperationStatus,
 );
 
 export function operationStatusReducer(state: OperationStatusState, action: BaseAction): OperationStatusState {
@@ -24,6 +25,7 @@ export function operationStatusReducer(state: OperationStatusState, action: Base
                         state.redirectStatus,
                         state.fetchFriendsStatus,
                         state.findUserStatus,
+                        state.fetchInvitationStatus,
                     )
                 case EOperationType.LOG_IN:
                     return new OperationStatusState(
@@ -33,6 +35,7 @@ export function operationStatusReducer(state: OperationStatusState, action: Base
                         state.redirectStatus,
                         state.fetchFriendsStatus,
                         state.findUserStatus,
+                        state.fetchInvitationStatus,
                     )
                 case EOperationType.SIGN_UP:
                     return new OperationStatusState(
@@ -42,6 +45,7 @@ export function operationStatusReducer(state: OperationStatusState, action: Base
                         state.redirectStatus,
                         state.fetchFriendsStatus,
                         state.findUserStatus,
+                        state.fetchInvitationStatus,
                     )
                 case EOperationType.FETCH_FRIENDS:
                     return new OperationStatusState(
@@ -51,6 +55,7 @@ export function operationStatusReducer(state: OperationStatusState, action: Base
                         state.redirectStatus,
                         operationStatusAction.operationState,
                         state.findUserStatus,
+                        state.fetchInvitationStatus,
                     )
                 case EOperationType.FIND_USER:
                     return new OperationStatusState(
@@ -59,6 +64,17 @@ export function operationStatusReducer(state: OperationStatusState, action: Base
                         state.signupStatus,
                         state.redirectStatus,
                         state.fetchFriendsStatus,
+                        operationStatusAction.operationState,
+                        state.fetchInvitationStatus,
+                    )
+                case EOperationType.FETCH_INVITATION:
+                    return new OperationStatusState(
+                        state.getUserInfoStatus,
+                        state.loginStatus,
+                        state.signupStatus,
+                        state.redirectStatus,
+                        state.fetchFriendsStatus,
+                        state.findUserStatus,
                         operationStatusAction.operationState,
                     )
                 default:

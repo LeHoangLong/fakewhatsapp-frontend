@@ -2,6 +2,7 @@ import { BaseAction } from "../actions/BaseActions";
 import { AppState } from "../state/AppState";
 import { foundUserReducer, initialFoundUserState } from "./FoundUserReducer";
 import { friendReducer, initialFriendState } from "./FriendReducer";
+import { initialInvitationState, invitationReducer } from "./InvitationReducer";
 import { initialOperationStatusState, operationStatusReducer } from "./OperationStatusReducer";
 import { userReducer, initialUserState } from "./UserReducer";
 
@@ -10,6 +11,7 @@ const initialAppState: AppState = new AppState(
     initialOperationStatusState,
     initialFriendState,
     initialFoundUserState,
+    initialInvitationState,
 );
 
 export function rootReducer(state: AppState = initialAppState, action: BaseAction): AppState{
@@ -18,5 +20,6 @@ export function rootReducer(state: AppState = initialAppState, action: BaseActio
         operationStatusReducer(state.operationStatusState, action),
         friendReducer(state.friendState, action),
         foundUserReducer(state.foundUserState, action),
+        invitationReducer(state.invitationState, action),
     );    
 }

@@ -53,7 +53,6 @@ export const MainPage = () => {
     let [showConversation, setShowConversation] = useState(false);
     let [selectedUser, setSelectedUser] = useState<User | null>(null);
     function onUserSelected(user: User) {
-        console.log(user);
         setSelectedUser(user);
     }
 
@@ -77,7 +76,7 @@ export const MainPage = () => {
             if (selectedUser) {
                 //this condition by right is always true
                 return (
-                    <StrangerView user={selectedUser}></StrangerView>
+                    <StrangerView selectedUser={selectedUser} thisUser={ userState.user! }></StrangerView>
                 )
             }
         } else if (showConversation){
