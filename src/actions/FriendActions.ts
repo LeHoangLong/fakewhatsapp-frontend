@@ -6,8 +6,10 @@ export const EFriendActionTypes = {
 }
 
 export class FriendActionAddFriends extends BaseAction {
-    readonly newFriends: User[];
-    constructor(newFriends: User[]) {
+    constructor(
+        public newFriends: readonly User[],
+        public isEndReached: boolean,
+    ) {
         super(EFriendActionTypes.ADD_FRIENDS);
         this.newFriends = newFriends;
     }

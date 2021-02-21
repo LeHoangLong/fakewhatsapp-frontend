@@ -9,28 +9,17 @@ export const friendReducer = (state: FriendState = initialFriendState, action: B
     switch (action.type) {
         case EFriendActionTypes.ADD_FRIENDS:
             let addFriendAction = action as FriendActionAddFriends;
-            if (addFriendAction.newFriends.length > 0) {
-                let newFriends: User[] = [];
-                for (let i = 0; i < addFriendAction.newFriends.length; i++) {
-                    if (!state.doesFriendWithInfoIdExists(addFriendAction.newFriends[i].infoId)) {
-                        //add new friend
-                        newFriends.push(addFriendAction.newFriends[i]);
-                    }
+            let newFriends: User[] = [];
+            for (let i = 0; i < addFriendAction.newFriends.length; i++) {
+                if (!state.doesFriendWithInfoIdExists(addFriendAction.newFriends[i].infoId)) {
+                    //add new friend
+                    newFriends.push(addFriendAction.newFriends[i]);
                 }
-                if (newFriends.length > 0) {
-                    return new FriendState(
-                        state.allFriends.concat(newFriends),
-                        false,
-                    );
-                } else {
-                    return state;
-                }
-            } else {
-                return new FriendState(
-                    state.allFriends,
-                    true,
-                )
             }
+            return new FriendState(
+                state.allFriends.concat(newFriends),
+                addFriendAction.isEndReached,
+            );
         default:
             return state;
     }

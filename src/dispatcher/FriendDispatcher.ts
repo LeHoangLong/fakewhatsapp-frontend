@@ -28,7 +28,8 @@ export class FriendDispatcher implements IFriendDispatcher {
             for (let i = 0; i < resultData.rows.length; i++) {
                 friends.push(new User(resultData.rows[i].name, resultData.rows[i].infoId));
             }
-            this.dispatch(new FriendActionAddFriends(friends));
+            let isEndReached = resultData.rows.length < limit;
+            this.dispatch(new FriendActionAddFriends(friends, isEndReached));
             this.dispatch(new OperationStatusActionSetStatus(EOperationType.FETCH_FRIENDS, EOperationStatus.SUCCESS).toPlainObject());
         } catch (error) {
             this.dispatch(
@@ -72,9 +73,5 @@ export class FriendDispatcher implements IFriendDispatcher {
             this.dispatch(new OperationStatusActionSetStatus(EOperationType.FETCH_FRIENDS, EOperationStatus.IDLE).toPlainObject());
         }
         return friends;
-    }
-    
-    addFriend(friends: User[]): void {
-        this.dispatch(new FriendActionAddFriends(friends).toPlainObject());
     }
 }

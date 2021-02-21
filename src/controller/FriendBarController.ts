@@ -34,10 +34,7 @@ export class FriendBarController {
                 if (friends.length === 0) {
                     break;
                 }
-                ret.concat(friends);
             }
-            this.friendDispatcher.addFriend(ret);
-            // also find user with name
         }
     }
 
