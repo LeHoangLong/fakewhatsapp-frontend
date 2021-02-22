@@ -14,4 +14,8 @@ export class StrangerViewController {
     onCreateFriendRequest(recipientInfoId: number) {
         this.dispatcher.sendFriendRequestToUser(recipientInfoId);
     }
+
+    onDeleteSentFriendRequest(recipientInfoId: number) {
+        this.dispatcher.deleteSentFriendRequestToUser(recipientInfoId);
+    }
 }

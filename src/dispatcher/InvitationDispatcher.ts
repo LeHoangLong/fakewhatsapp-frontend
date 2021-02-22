@@ -1,7 +1,7 @@
 import axios from "axios";
 import { Dispatch } from "react";
 import { BaseAction } from "../actions/BaseActions";
-import { InvitationActionAddPendingInvitation, InvitationActionAddSentInvitation } from "../actions/InvitationActions";
+import { InvitationActionAddPendingInvitation, InvitationActionAddSentInvitation, InvitationActionDeleteSentInvitation } from "../actions/InvitationActions";
 import { OperationStatusActionSetStatus } from "../actions/OperationStatusActions";
 import { config } from "../config";
 import { Invitation } from "../model/InvitationModel";
@@ -75,5 +75,28 @@ export class InvitationDispatcher implements IInvitationDispatcher {
         } finally {
             this.dispatch(new OperationStatusActionSetStatus(EOperationType.SEND_INVITATION, EOperationStatus.IDLE).toPlainObject());
         }
+    }
+
+    
+    async deleteSentFriendRequestToUser(recipientInfoId: number): Promise<void> {
+        try {
+            this.dispatch(new OperationStatusActionSetStatus(EOperationType.DELETE_INVITATION, EOperationStatus.IN_PROGRESS).toPlainObject());
+            await axios.post(`${config.BACKEND_URL}/invitations/deletedInvitations`, {
+                recipientInfoId: recipientInfoId
+            });
+            this.dispatch(new InvitationActionDeleteSentInvitation(recipientInfoId).toPlainObject());
+            this.dispatch(new OperationStatusActionSetStatus(EOperationType.DELETE_INVITATION, EOperationStatus.SUCCESS).toPlainObject());
+        } catch (error) {
+            this.dispatch(
+                new OperationStatusActionSetStatus(
+                    EOperationType.DELETE_INVITATION, 
+                    EOperationStatus.ERROR, 
+                    new BaseOperationStatusDetail(error.toString())
+                ).toPlainObject()
+            );
+        } finally {
+            this.dispatch(new OperationStatusActionSetStatus(EOperationType.DELETE_INVITATION, EOperationStatus.IDLE).toPlainObject());
+        }
+        
     }
 }

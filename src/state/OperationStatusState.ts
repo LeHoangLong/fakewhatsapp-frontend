@@ -6,6 +6,7 @@ export enum EOperationType {
     FIND_USER = 'FIND_USER',
     FETCH_INVITATION = 'FETCH_INVITATION',
     SEND_INVITATION = 'SEND_INVITATION',
+    DELETE_INVITATION = 'DELETE_INVITATION',
 }
 
 export enum EOperationStatus {
@@ -42,4 +43,5 @@ export interface OperationStatusState {
     readonly [EOperationType.FIND_USER]: OperationStatus;
     readonly [EOperationType.FETCH_INVITATION]: OperationStatus;
     readonly [EOperationType.SEND_INVITATION]: OperationStatus; 
+    readonly [EOperationType.DELETE_INVITATION]: OperationStatus;
 }

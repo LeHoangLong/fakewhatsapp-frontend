@@ -18,6 +18,7 @@ interface MapStateToProps {
     invitationState: InvitationState
     sendInvitationStatus: OperationStatus,
     fetchInvitationStatus: OperationStatus,
+    deleteSentInvitationStatus: OperationStatus,
 }
 
 export const StrangerView = ({thisUser, selectedUser}: StrangerViewProps) => {
@@ -30,14 +31,16 @@ export const StrangerView = ({thisUser, selectedUser}: StrangerViewProps) => {
         strangerViewController.onShown(thisUser.infoId, selectedUser.infoId);
     }, [selectedUser.infoId, thisUser.infoId, strangerViewController]);
 
-    let {invitationState, sendInvitationStatus, fetchInvitationStatus} = useSelector<AppState, MapStateToProps>((state: AppState): MapStateToProps => ({
+    let {invitationState, sendInvitationStatus, fetchInvitationStatus, deleteSentInvitationStatus} = useSelector<AppState, MapStateToProps>((state: AppState): MapStateToProps => ({
         invitationState: state.invitationState,
         sendInvitationStatus: state.operationStatusState.SEND_INVITATION,
         fetchInvitationStatus: state.operationStatusState.FETCH_INVITATION,
+        deleteSentInvitationStatus: state.operationStatusState.DELETE_INVITATION,
     }));
 
     useEffect(() => {
-        if (fetchInvitationStatus.status === EOperationStatus.IN_PROGRESS) {
+        if (fetchInvitationStatus.status === EOperationStatus.IN_PROGRESS ||
+            fetchInvitationStatus.status === EOperationStatus.INIT) {
             setIsLoading(true);
         } else {
             setIsLoading(false);
@@ -46,9 +49,13 @@ export const StrangerView = ({thisUser, selectedUser}: StrangerViewProps) => {
 
     function showButton() {
         if (invitationState.sentInvitations.has(selectedUser.infoId)) {
+            let isLoading = deleteSentInvitationStatus.status === EOperationStatus.IN_PROGRESS;
             return (
-                <button className="cancel-friend-request">
+                <button className="cancel-friend-request" onClick={() => strangerViewController.onDeleteSentFriendRequest(selectedUser.infoId)}>
                     Cancel friend request
+                    <div style={{display: isLoading? 'block': 'none'}}>
+                        <LoadingIcon sizePx={30}></LoadingIcon>
+                    </div>
                 </button>
             );
         } else if (invitationState.pendingInvitations.has(selectedUser.infoId)) {

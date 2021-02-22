@@ -1,5 +1,5 @@
 import { BaseAction } from "../actions/BaseActions";
-import { EInvitationActionTypes, InvitationActionAddPendingInvitation, InvitationActionAddSentInvitation } from "../actions/InvitationActions";
+import { EInvitationActionTypes, InvitationActionAddPendingInvitation, InvitationActionAddSentInvitation, InvitationActionDeleteSentInvitation } from "../actions/InvitationActions";
 import { Invitation } from "../model/InvitationModel";
 import { InvitationState } from "../state/InvitationState";
 
@@ -18,13 +18,16 @@ export const invitationReducer = (state: InvitationState, action: BaseAction): I
             )
         case EInvitationActionTypes.ADD_PENDING_INVITATION:
             let addPendingInvitationAction = action as InvitationActionAddPendingInvitation;
-            console.log('addPendingInvitationAction.invitation');
-            console.log(addPendingInvitationAction.invitation);
             return new InvitationState(
                 state.sentInvitations,
                 state.addPendingInvitation(addPendingInvitationAction.invitation),
             )
-
+        case EInvitationActionTypes.DELETE_SENT_INVITATION:
+            let deleteSentInvitationAction = action as InvitationActionDeleteSentInvitation;
+            return new InvitationState(
+                state.removeSentInvitation(deleteSentInvitationAction.recipientInfoId),
+                state.pendingInvitations,
+            )
         default:
             return state;
     }

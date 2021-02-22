@@ -27,4 +27,10 @@ export class InvitationState {
         newMap.set(invitation.senderInfoId, invitation);
         return newMap;
     }
+
+    removeSentInvitation(recipientInfoId: number): Map<number, Invitation> {
+        let newMap = new Map(this.sentInvitations);
+        newMap.delete(recipientInfoId);
+        return newMap;
+    }
 }
