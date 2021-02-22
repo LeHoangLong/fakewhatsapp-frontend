@@ -19,6 +19,7 @@ interface MapStateToProps {
     sendInvitationStatus: OperationStatus,
     fetchInvitationStatus: OperationStatus,
     deleteSentInvitationStatus: OperationStatus,
+    acceptInvitationStatus: OperationStatus,
 }
 
 export const StrangerView = ({thisUser, selectedUser}: StrangerViewProps) => {
@@ -31,11 +32,14 @@ export const StrangerView = ({thisUser, selectedUser}: StrangerViewProps) => {
         strangerViewController.onShown(thisUser.infoId, selectedUser.infoId);
     }, [selectedUser.infoId, thisUser.infoId, strangerViewController]);
 
-    let {invitationState, sendInvitationStatus, fetchInvitationStatus, deleteSentInvitationStatus} = useSelector<AppState, MapStateToProps>((state: AppState): MapStateToProps => ({
+    let {invitationState, sendInvitationStatus, 
+        fetchInvitationStatus, deleteSentInvitationStatus,
+        acceptInvitationStatus } = useSelector<AppState, MapStateToProps>((state: AppState): MapStateToProps => ({
         invitationState: state.invitationState,
         sendInvitationStatus: state.operationStatusState.SEND_INVITATION,
         fetchInvitationStatus: state.operationStatusState.FETCH_INVITATION,
         deleteSentInvitationStatus: state.operationStatusState.DELETE_INVITATION,
+        acceptInvitationStatus: state.operationStatusState.ACCEPT_INVITATION,
     }));
 
     useEffect(() => {
@@ -59,14 +63,18 @@ export const StrangerView = ({thisUser, selectedUser}: StrangerViewProps) => {
                 </button>
             );
         } else if (invitationState.pendingInvitations.has(selectedUser.infoId)) {
+            let isLoading = acceptInvitationStatus.status === EOperationStatus.IN_PROGRESS;
             return (
                 <div className="accept-friend-request-buttons-container">
-                    <button className="reject-button">
+                    <button className="reject-button" onClick={() => strangerViewController.onRejectPendingFriendRequest(selectedUser.infoId)}>
                         Reject
                     </button>
-                    <button className="accept-button">
+                    <button className="accept-button" onClick={() => strangerViewController.onAcceptPendingFriendRequest(selectedUser.infoId)}>
                         Accept
                     </button>
+                    <div style={{display: isLoading? 'block': 'none'}}>
+                        <LoadingIcon sizePx={30}></LoadingIcon>
+                    </div>
                 </div>
             )
         } else {

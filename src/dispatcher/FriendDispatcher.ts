@@ -29,7 +29,7 @@ export class FriendDispatcher implements IFriendDispatcher {
                 friends.push(new User(resultData.rows[i].name, resultData.rows[i].infoId));
             }
             let isEndReached = resultData.rows.length < limit;
-            this.dispatch(new FriendActionAddFriends(friends, isEndReached));
+            this.dispatch(new FriendActionAddFriends(friends, isEndReached).toPlainObject());
             this.dispatch(new OperationStatusActionSetStatus(EOperationType.FETCH_FRIENDS, EOperationStatus.SUCCESS).toPlainObject());
         } catch (error) {
             this.dispatch(
@@ -39,6 +39,7 @@ export class FriendDispatcher implements IFriendDispatcher {
                     new BaseOperationStatusDetail(error.toString())
                 ).toPlainObject()
             );
+            throw error;
         } finally {
             this.dispatch(new OperationStatusActionSetStatus(EOperationType.FETCH_FRIENDS, EOperationStatus.IDLE).toPlainObject());
         }

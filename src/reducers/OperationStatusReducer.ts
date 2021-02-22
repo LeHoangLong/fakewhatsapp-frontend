@@ -12,6 +12,7 @@ export const initialOperationStatusState: OperationStatusState = {
     [EOperationType.FETCH_INVITATION]: initialOperationStatus,
     [EOperationType.SEND_INVITATION]: initialOperationStatus,
     [EOperationType.DELETE_INVITATION]: initialOperationStatus,
+    [EOperationType.ACCEPT_INVITATION]: initialOperationStatus,
 };
 
 export function operationStatusReducer(state: OperationStatusState, action: BaseAction): OperationStatusState {

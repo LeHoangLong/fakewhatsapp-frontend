@@ -14,8 +14,11 @@ export class FriendBarController {
     }
 
     private async fetchNewFriends(friendState: FriendState, offset: number, limit: number, fetchFriendOperationStatus: OperationStatus) {
-        if (fetchFriendOperationStatus.status === EOperationStatus.IDLE ||
-            fetchFriendOperationStatus.status === EOperationStatus.INIT) {
+        if (fetchFriendOperationStatus.status === EOperationStatus.INIT) {
+            await this.friendDispatcher.fetchFriends(offset, limit);
+        }
+
+        if (fetchFriendOperationStatus.status === EOperationStatus.IDLE) {
             if (friendState.isEndReached) {
                 return;
             } else {
@@ -58,4 +61,9 @@ export class FriendBarController {
         }
     }
     
+    onShown(fetchFriendOperationStatus: OperationStatus) {
+        if (fetchFriendOperationStatus.status === EOperationStatus.INIT) {
+            this.friendDispatcher.fetchFriends(0, config.DEFAULT_PAGE_SIZE);
+        }
+    }
 }

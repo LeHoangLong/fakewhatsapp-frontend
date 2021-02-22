@@ -33,4 +33,10 @@ export class InvitationState {
         newMap.delete(recipientInfoId);
         return newMap;
     }
+    
+    removePendingInvitation(senderInfoId: number): Map<number, Invitation> {
+        let newMap = new Map(this.pendingInvitations);
+        newMap.delete(senderInfoId);
+        return newMap;
+    }
 }

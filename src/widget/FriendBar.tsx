@@ -105,6 +105,10 @@ export const FriendBar = ({onUserSelected}: FriendBarProps) => {
         foundUserState.allUsers.length
     ])
 
+    useEffect(() => {
+        controller.onShown(fetchFriendOperationStatus);
+    }, [fetchFriendOperationStatus, controller])
+
     function displayFriends(friendState: FriendState, foundUserState: FoundUserState) {
         let ret = [];
         let friends: User[] = [];

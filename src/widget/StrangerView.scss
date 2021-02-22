@@ -37,4 +37,23 @@
         position: relative;
         border: 0px;
     }
+
+    .accept-friend-request-buttons-container {
+        display: flex;
+        position: relative;
+        .reject-button {
+            @include cancel-button;
+            @include h4;
+            margin: $m3;
+            position: relative;
+            border: 0px;
+        }
+        .accept-button {
+            @include primary-button;
+            @include h4;
+            margin: $m3;
+            position: relative;
+            border: 0px;
+        }
+    }
 }

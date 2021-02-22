@@ -1,5 +1,5 @@
 import { BaseAction } from "../actions/BaseActions";
-import { EInvitationActionTypes, InvitationActionAddPendingInvitation, InvitationActionAddSentInvitation, InvitationActionDeleteSentInvitation } from "../actions/InvitationActions";
+import { EInvitationActionTypes, InvitationActionAcceptPendingInvitation, InvitationActionAddPendingInvitation, InvitationActionAddSentInvitation, InvitationActionDeletePendingInvitation, InvitationActionDeleteSentInvitation } from "../actions/InvitationActions";
 import { Invitation } from "../model/InvitationModel";
 import { InvitationState } from "../state/InvitationState";
 
@@ -27,6 +27,18 @@ export const invitationReducer = (state: InvitationState, action: BaseAction): I
             return new InvitationState(
                 state.removeSentInvitation(deleteSentInvitationAction.recipientInfoId),
                 state.pendingInvitations,
+            )
+        case EInvitationActionTypes.DELETE_PENDING_INVITATION:
+            let deletePendingInvitationAction = action as InvitationActionDeletePendingInvitation;
+            return new InvitationState(
+                state.sentInvitations,
+                state.removeSentInvitation(deletePendingInvitationAction.senderInfoId),
+            )
+        case EInvitationActionTypes.ACCEPT_PENDING_INVITATION:
+            let acceptPendingInvitationAction = action as InvitationActionAcceptPendingInvitation;
+            return new InvitationState(
+                state.sentInvitations,
+                state.removeSentInvitation(acceptPendingInvitationAction.senderInfoId),
             )
         default:
             return state;

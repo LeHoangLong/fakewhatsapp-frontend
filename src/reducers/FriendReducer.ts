@@ -16,6 +16,8 @@ export const friendReducer = (state: FriendState = initialFriendState, action: B
                     newFriends.push(addFriendAction.newFriends[i]);
                 }
             }
+            console.log('newFriends');
+            console.log(newFriends);
             return new FriendState(
                 state.allFriends.concat(newFriends),
                 addFriendAction.isEndReached,

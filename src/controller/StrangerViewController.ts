@@ -18,4 +18,12 @@ export class StrangerViewController {
     onDeleteSentFriendRequest(recipientInfoId: number) {
         this.dispatcher.deleteSentFriendRequestToUser(recipientInfoId);
     }
+
+    onAcceptPendingFriendRequest(senderInfoId: number) { 
+        this.dispatcher.acceptFriendRequestFromUser(senderInfoId);
+    }
+
+    onRejectPendingFriendRequest(senderInfoId: number) {
+        this.dispatcher.rejectFriendRequestFromUser(senderInfoId);
+    }
 }
