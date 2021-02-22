@@ -24,6 +24,9 @@ $error-text-color: red;
 $progress-indicator-color: $blue-3;
 $scrollbar-color: $blue-3;
 $secondary-text-color: $grey-4;
+$error-button-color: red;
+$on-error-button-color: white;
+$error-button-pressed-color: #ad0000;
 
 $input-border-radius: 12px;
 $standard-button-radius: 12px;
@@ -90,6 +93,15 @@ h1 {
     color: $on-primary-button-color;
     &:active {
         background-color: $primary-button-pressed-color;
+    }
+}
+
+@mixin cancel-button {
+    @include button;
+    background-color: $error-button-color;
+    color: $on-error-button-color;
+    &:active {
+        background-color: $error-button-pressed-color;
     }
 }
 

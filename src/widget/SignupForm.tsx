@@ -22,7 +22,7 @@ export const SignupForm = ({onSignup, onGoToLoginPage, isLoading}: LoginFormProp
     let [errorTextClass, setErrorTextClass] = useState('error-text-hidden');
     let [errorText, setErrorText] = useState('');
     const {signupOperationStatus} = useSelector<AppState, LoginFormStoreProps>((state): LoginFormStoreProps => ({
-        signupOperationStatus: state.operationStatusState.signupStatus,
+        signupOperationStatus: state.operationStatusState.SIGN_UP,
     }));
 
     function onUsernameChanged(event: React.ChangeEvent<HTMLInputElement>) {

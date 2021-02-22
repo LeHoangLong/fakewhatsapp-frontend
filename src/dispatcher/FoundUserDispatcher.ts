@@ -1,7 +1,7 @@
 import axios from "axios";
 import { Dispatch } from "react";
 import { BaseAction } from "../actions/BaseActions";
-import { FoundUserActionAddFoundUsers } from "../actions/FoundUserAction";
+import { FoundUserActionAddFoundUsers, FoundUserActionClearSearchResult, FoundUserActionUpdateSearchTerm } from "../actions/FoundUserAction";
 import { OperationStatusActionSetStatus } from "../actions/OperationStatusActions";
 import { config } from "../config";
 import { User } from "../model/UserModel";
@@ -13,6 +13,10 @@ export class FoundUserDispatcher implements IFoundUserDispatcher {
         public dispatch: Dispatch<BaseAction>,
     ) {
 
+    }
+
+    updateSearchTerm(name: string): void {
+        this.dispatch(new FoundUserActionUpdateSearchTerm(name).toPlainObject());
     }
 
     async findUserByName(name: string, offset: number, limit: number): Promise<User[]> {
@@ -34,6 +38,7 @@ export class FoundUserDispatcher implements IFoundUserDispatcher {
             }
             let isEndReached: boolean = foundUserRows.length < limit;
             this.dispatch(new FoundUserActionAddFoundUsers(name, foundUsers, isEndReached).toPlainObject());
+            this.dispatch(new OperationStatusActionSetStatus(EOperationType.FIND_USER, EOperationStatus.SUCCESS).toPlainObject());    
         } catch (error) {
             this.dispatch(
                 new OperationStatusActionSetStatus(
@@ -49,5 +54,9 @@ export class FoundUserDispatcher implements IFoundUserDispatcher {
             this.dispatch(new OperationStatusActionSetStatus(EOperationType.FIND_USER, EOperationStatus.IDLE).toPlainObject());    
         }
         return ret;
+    }
+
+    clearFindResult(): void {
+        this.dispatch(new FoundUserActionClearSearchResult().toPlainObject());
     }
 }

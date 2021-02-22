@@ -27,8 +27,8 @@ export const MainPage = () => {
     function mapStateToProps(state: AppState): MainPageProps {
         return {
             userState: state.userState,
-            getUserInfoOperationStatus: state.operationStatusState.getUserInfoStatus,
-            loginOperationStatus: state.operationStatusState.loginStatus,
+            getUserInfoOperationStatus: state.operationStatusState.GET_USER_INFO,
+            loginOperationStatus: state.operationStatusState.LOG_IN,
             friendState: state.friendState,
         }
     }

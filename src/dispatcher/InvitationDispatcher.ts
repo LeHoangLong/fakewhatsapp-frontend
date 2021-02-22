@@ -46,4 +46,34 @@ export class InvitationDispatcher implements IInvitationDispatcher {
             this.dispatch(new OperationStatusActionSetStatus(EOperationType.FETCH_INVITATION, EOperationStatus.IDLE).toPlainObject());
         }
     }
+
+    async sendFriendRequestToUser(recipientInfoId: number): Promise<void> {
+        this.dispatch(new OperationStatusActionSetStatus(EOperationType.SEND_INVITATION, EOperationStatus.IN_PROGRESS).toPlainObject());
+        try {
+            let result = await axios.post(`${config.BACKEND_URL}/invitations/sentInvitations`, {
+                recipientInfoId: recipientInfoId
+            });
+            let resultData = result.data;
+            let invitation = new Invitation(
+                resultData.createdTime,
+                resultData.senderInfoId,
+                resultData.recipientInfoId,
+            )
+            this.dispatch(new InvitationActionAddSentInvitation(invitation).toPlainObject());
+            this.dispatch(new OperationStatusActionSetStatus(EOperationType.SEND_INVITATION, EOperationStatus.SUCCESS).toPlainObject());
+        } catch (error) {
+            this.dispatch(
+                new OperationStatusActionSetStatus(
+                    EOperationType.SEND_INVITATION, 
+                    EOperationStatus.ERROR, 
+                    new BaseOperationStatusDetail(error.toString())
+                ).toPlainObject()
+            );
+            if (error.response.status !== 404) {
+                throw error;
+            }
+        } finally {
+            this.dispatch(new OperationStatusActionSetStatus(EOperationType.SEND_INVITATION, EOperationStatus.IDLE).toPlainObject());
+        }
+    }
 }

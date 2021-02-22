@@ -10,4 +10,8 @@ export class StrangerViewController {
     onShown(currentUserInfoId: number, userInfoId: number) {
         this.dispatcher.fetchFriendRequestForUser(currentUserInfoId, userInfoId);
     }
+
+    onCreateFriendRequest(recipientInfoId: number) {
+        this.dispatcher.sendFriendRequestToUser(recipientInfoId);
+    }
 }

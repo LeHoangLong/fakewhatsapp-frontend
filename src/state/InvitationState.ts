@@ -24,7 +24,7 @@ export class InvitationState {
 
     addPendingInvitation(invitation: Invitation): Map<number, Invitation> {
         let newMap = new Map(this.pendingInvitations);
-        newMap.set(invitation.recipientInfoId, invitation);
+        newMap.set(invitation.senderInfoId, invitation);
         return newMap;
     }
 }

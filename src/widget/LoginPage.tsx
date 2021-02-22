@@ -27,9 +27,9 @@ export const LoginPage = () => {
     const {userState, getUserInfoOperationStatus, loginOperationStatus, signupOperationStatus} = useSelector<AppState, LoginPageProps>((state): LoginPageProps => {
         return {
             userState: state.userState,
-            getUserInfoOperationStatus: state.operationStatusState.getUserInfoStatus,
-            loginOperationStatus: state.operationStatusState.loginStatus,
-            signupOperationStatus: state.operationStatusState.signupStatus,
+            getUserInfoOperationStatus: state.operationStatusState.GET_USER_INFO,
+            loginOperationStatus: state.operationStatusState.LOG_IN,
+            signupOperationStatus: state.operationStatusState.SIGN_UP,
         }
     });
 

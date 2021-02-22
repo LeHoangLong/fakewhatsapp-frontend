@@ -43,9 +43,9 @@ export const FriendBar = ({onUserSelected}: FriendBarProps) => {
     const {thisUser, friendState, fetchFriendOperationStatus, foundUserState,foundUserOperationStatus} = useSelector<AppState, MapStateToProps>((state: AppState): MapStateToProps => ({
             thisUser: state.userState.user!,
             friendState: state.friendState,
-            fetchFriendOperationStatus: state.operationStatusState.fetchFriendsStatus,
+            fetchFriendOperationStatus: state.operationStatusState.FETCH_FRIENDS,
             foundUserState: state.foundUserState,
-            foundUserOperationStatus: state.operationStatusState.findUserStatus,
+            foundUserOperationStatus: state.operationStatusState.FIND_USER,
     }));
 
     useEffect(() => {

@@ -5,6 +5,7 @@ export enum EOperationType {
     FETCH_FRIENDS = 'FETCH_FRIENDS',
     FIND_USER = 'FIND_USER',
     FETCH_INVITATION = 'FETCH_INVITATION',
+    SEND_INVITATION = 'SEND_INVITATION',
 }
 
 export enum EOperationStatus {
@@ -33,30 +34,12 @@ export class OperationStatus {
 
 export const initialOperationStatus = new OperationStatus(EOperationStatus.INIT);
 
-export class OperationStatusState {
-    readonly getUserInfoStatus: OperationStatus;
-    readonly loginStatus: OperationStatus;
-    readonly signupStatus: OperationStatus;
-    readonly redirectStatus: OperationStatus;
-    readonly fetchFriendsStatus: OperationStatus;
-    readonly findUserStatus: OperationStatus;
-    readonly fetchInvitationStatus: OperationStatus;
-
-    constructor(
-        getUserInfoStatus: OperationStatus, 
-        loginStatus: OperationStatus, 
-        signupStatus: OperationStatus, 
-        redirectStatus: OperationStatus,
-        fetchFriendsStatus: OperationStatus,
-        findUserStatus: OperationStatus,
-        fetchInvitationStatus: OperationStatus,
-    ) {
-        this.getUserInfoStatus = getUserInfoStatus;
-        this.loginStatus = loginStatus;
-        this.signupStatus = signupStatus;
-        this.redirectStatus = redirectStatus;
-        this.fetchFriendsStatus = fetchFriendsStatus;
-        this.findUserStatus = findUserStatus;
-        this.fetchInvitationStatus = fetchInvitationStatus;
-    }
+export interface OperationStatusState {
+    readonly [EOperationType.GET_USER_INFO]: OperationStatus;
+    readonly [EOperationType.LOG_IN]: OperationStatus;
+    readonly [EOperationType.SIGN_UP]: OperationStatus;
+    readonly [EOperationType.FETCH_FRIENDS]: OperationStatus;
+    readonly [EOperationType.FIND_USER]: OperationStatus;
+    readonly [EOperationType.FETCH_INVITATION]: OperationStatus;
+    readonly [EOperationType.SEND_INVITATION]: OperationStatus; 
 }
