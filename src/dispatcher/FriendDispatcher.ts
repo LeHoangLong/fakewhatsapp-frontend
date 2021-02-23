@@ -26,7 +26,7 @@ export class FriendDispatcher implements IFriendDispatcher {
             let friends: User[] = [];
             let resultData = result.data; 
             for (let i = 0; i < resultData.rows.length; i++) {
-                friends.push(new User(resultData.rows[i].name, resultData.rows[i].infoId));
+                friends.push(new User(resultData.rows[i].name, resultData.rows[i].userInfoId));
             }
             let isEndReached = resultData.rows.length < limit;
             this.dispatch(new FriendActionAddFriends(friends, isEndReached).toPlainObject());

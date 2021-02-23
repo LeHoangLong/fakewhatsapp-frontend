@@ -1,5 +1,6 @@
 import { BaseAction } from "../actions/BaseActions";
 import { AppState } from "../state/AppState";
+import { chatReducer, initialChatState } from "./ChatReducer";
 import { foundUserReducer, initialFoundUserState } from "./FoundUserReducer";
 import { friendReducer, initialFriendState } from "./FriendReducer";
 import { initialInvitationState, invitationReducer } from "./InvitationReducer";
@@ -12,6 +13,7 @@ const initialAppState: AppState = new AppState(
     initialFriendState,
     initialFoundUserState,
     initialInvitationState,
+    initialChatState,
 );
 
 export function rootReducer(state: AppState = initialAppState, action: BaseAction): AppState{
@@ -21,5 +23,6 @@ export function rootReducer(state: AppState = initialAppState, action: BaseActio
         friendReducer(state.friendState, action),
         foundUserReducer(state.foundUserState, action),
         invitationReducer(state.invitationState, action),
+        chatReducer(state.chatState, action),
     );    
 }

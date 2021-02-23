@@ -10,13 +10,13 @@ import { FriendState } from '../state/FriendState';
 import { EOperationStatus, OperationStatus } from '../state/OperationStatusState';
 import './FriendBar.scss'
 import { LoadingIcon } from './LoadingIcon';
-import { SearchBar } from './SearchBar'
 
 interface FriendBarProps {
     onUserSelected(user: User): void;
+    searchName: string,
 }
 
-export const FriendBar = ({onUserSelected}: FriendBarProps) => {
+export const FriendBar = ({onUserSelected, searchName}: FriendBarProps) => {
     let friendListRef = useRef(null);
     let loadingIconRef = useRef(null);
     let dispatch = useDispatch();
@@ -25,12 +25,6 @@ export const FriendBar = ({onUserSelected}: FriendBarProps) => {
     let controller: FriendBarController = useRef(new FriendBarController(friendDispatcher, foundUserDispatcher)).current;
     let [showLoadingIcon, setShowLoadingIcon] = useState(true);
     let [addUserText, setAddUserText] = useState('');
-    let [searchName, setSearchName] = useState('');
-
-    function onSearchFriendNameChangeHandler(name: string) {
-        setSearchName(name);
-        controller.onSearchFriendNameChangeHandler(name);
-    }
 
     interface MapStateToProps {
         thisUser: User,
@@ -49,6 +43,10 @@ export const FriendBar = ({onUserSelected}: FriendBarProps) => {
     }));
 
     useEffect(() => {
+        controller.onSearchFriendNameChangeHandler(searchName);
+    }, [searchName, controller]);
+
+    useEffect(() => {
         if (showLoadingIcon) {
             let intersectionObserver = new IntersectionObserver((entries) => {
                 controller.onLoadingIconShownHandler(searchName, friendState, foundUserState, fetchFriendOperationStatus, foundUserOperationStatus);
@@ -62,39 +60,23 @@ export const FriendBar = ({onUserSelected}: FriendBarProps) => {
     }, [controller, friendState, showLoadingIcon, fetchFriendOperationStatus, foundUserOperationStatus, foundUserState, searchName]);
 
     useEffect(() => {
-        if (searchName === '') {
-            if (friendState.allFriends.length === 0 && friendState.isEndReached) {
-                setAddUserText("You don't have any friends yet. Use the search bar to find new friends and message them.");
-                setShowLoadingIcon(false);
-            } else {
-                setAddUserText('');
-                if (!friendState.isEndReached ||
-                    fetchFriendOperationStatus.status === EOperationStatus.IN_PROGRESS ||
-                    fetchFriendOperationStatus.status === EOperationStatus.INIT
-                    ) {
-                    setShowLoadingIcon(true);
-                } else if (friendState.isEndReached){
-                    setShowLoadingIcon(false);
-                } 
-            }
+        if (friendState.allFriends.length === 0 &&
+            friendState.isEndReached &&
+            foundUserState.allUsers.length === 0 &&
+            foundUserState.isEndReached) {
+            setAddUserText("No users found");
+            setShowLoadingIcon(false);
         } else {
-            if (friendState.allFriends.length === 0 &&
-                friendState.isEndReached &&
-                foundUserState.allUsers.length === 0 &&
-                foundUserState.isEndReached) {
-                setAddUserText("No users found");
-                setShowLoadingIcon(false);
+            setAddUserText('');
+            if (!foundUserState.isEndReached ||
+                !friendState.isEndReached ||
+                fetchFriendOperationStatus.status === EOperationStatus.IN_PROGRESS ||
+                fetchFriendOperationStatus.status === EOperationStatus.INIT ||
+                foundUserOperationStatus.status === EOperationStatus.IN_PROGRESS
+                ) {
+                setShowLoadingIcon(true);
             } else {
-                setAddUserText('');
-                if (!foundUserState.isEndReached ||
-                    fetchFriendOperationStatus.status === EOperationStatus.IN_PROGRESS ||
-                    fetchFriendOperationStatus.status === EOperationStatus.INIT ||
-                    foundUserOperationStatus.status === EOperationStatus.IN_PROGRESS
-                    ) {
-                    setShowLoadingIcon(true);
-                } else {
-                    setShowLoadingIcon(false);
-                }
+                setShowLoadingIcon(false);
             }
         }
     }, [friendState,
@@ -112,7 +94,7 @@ export const FriendBar = ({onUserSelected}: FriendBarProps) => {
     function displayFriends(friendState: FriendState, foundUserState: FoundUserState) {
         let ret = [];
         let friends: User[] = [];
-        if (searchName !== '' && thisUser.name.includes(searchName)) {
+        if (thisUser.name.includes(searchName)) {
             ret.push(
                 <div key="me-title" className="group-title">
                     Me
@@ -130,14 +112,10 @@ export const FriendBar = ({onUserSelected}: FriendBarProps) => {
             )
         }
 
-        if (searchName === '') {
-            friends = friendState.allFriends as User[];
-        } else {
-            for (let i = 0; i < friendState.allFriends.length; i++) {
-                let friend: User = friendState.allFriends[i];
-                if (friend.name.includes(searchName) && friend.infoId !== thisUser.infoId) {
-                    friends.push(friendState.allFriends[i]);
-                }
+        for (let i = 0; i < friendState.allFriends.length; i++) {
+            let friend: User = friendState.allFriends[i];
+            if (friend.name.includes(searchName) && friend.infoId !== thisUser.infoId) {
+                friends.push(friendState.allFriends[i]);
             }
         }
         if (friends.length > 0) {
@@ -149,7 +127,7 @@ export const FriendBar = ({onUserSelected}: FriendBarProps) => {
         }
         for (let i = 0; i < friends.length; i++) {
             ret.push(
-                <div key={ friends[i].infoId } className="friend-card">
+                <div key={ friends[i].infoId } className="friend-card" onClick={() => onUserSelected(friends[i])}>
                     <div className="profile-letter">
                         { friends[i].name[0].toUpperCase() }
                     </div>
@@ -159,42 +137,37 @@ export const FriendBar = ({onUserSelected}: FriendBarProps) => {
                 </div>
             )
         }
-        if (searchName !== '') {
-            let usersToShow: User[] = [];
-            for (let i = 0; i < foundUserState.allUsers.length; i++) {
-                let user: User = foundUserState.allUsers[i];
-                if (!friendState.doesFriendWithInfoIdExists(user.infoId) && user.infoId !== thisUser.infoId) {
-                    usersToShow.push(user);
-                }
+        let usersToShow: User[] = [];
+        for (let i = 0; i < foundUserState.allUsers.length; i++) {
+            let user: User = foundUserState.allUsers[i];
+            if (!friendState.doesFriendWithInfoIdExists(user.infoId) && user.infoId !== thisUser.infoId) {
+                usersToShow.push(user);
             }
-            if (usersToShow.length > 0) {
-                ret.push(
-                    <div key="stranger-title" className="group-title">
-                        People
+        }
+        if (usersToShow.length > 0) {
+            ret.push(
+                <div key="stranger-title" className="group-title">
+                    People
+                </div>
+            )
+        }
+        for (let i = 0; i < usersToShow.length; i++) {
+            ret.push(
+                <div key={ usersToShow[i].infoId } className="friend-card" onClick={() => onUserSelected(usersToShow[i])}>
+                    <div className="profile-letter">
+                        { usersToShow[i].name[0].toUpperCase() }
                     </div>
-                )
-            }
-            for (let i = 0; i < usersToShow.length; i++) {
-                ret.push(
-                    <div key={ usersToShow[i].infoId } className="friend-card" onClick={() => onUserSelected(usersToShow[i])}>
-                        <div className="profile-letter">
-                            { usersToShow[i].name[0].toUpperCase() }
-                        </div>
-                        <div className="name">
-                            { usersToShow[i].name }
-                        </div>
+                    <div className="name">
+                        { usersToShow[i].name }
                     </div>
-                )
-            }
+                </div>
+            )
         }
         return ret;
     }
 
     return (
         <div className="friend-bar">
-            <div className="search-bar-container">
-                <SearchBar onTextChange={onSearchFriendNameChangeHandler}></SearchBar>
-            </div>
             <div className="friend-list" ref={friendListRef}>
                 { displayFriends(friendState, foundUserState) }
                 {(() => {

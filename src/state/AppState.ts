@@ -1,3 +1,4 @@
+import { ChatState } from "./ChatState";
 import { FoundUserState } from "./FoundUserState";
 import { FriendState } from "./FriendState";
 import { InvitationState } from "./InvitationState";
@@ -11,6 +12,7 @@ export class AppState {
         public friendState: FriendState,
         public foundUserState: FoundUserState,
         public invitationState: InvitationState,
+        public chatState: ChatState,
     ) {
     }
 }

@@ -1,4 +1,4 @@
-export class MessageModel {
+export class Message {
     senderId: number;
     senderName: string;
     message: string;

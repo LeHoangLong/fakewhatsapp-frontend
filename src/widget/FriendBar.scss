@@ -5,11 +5,6 @@
     width: 100%;
     height: 100%;
     flex-direction: column;
-    border-right: 1px $border-color solid;
-    .search-bar-container {
-        padding: $p6 $p5;
-        background-color: $secondary-color;
-    }
     .friend-list {
         @include myscrollbar;
         flex-grow: 1;
@@ -40,15 +35,7 @@
             align-items: center;
             cursor: pointer;
             .profile-letter {
-                @include h3;
-                border-radius: 50%;
-                background-color: $secondary-color;
-                margin: $m5;
-                height: 50px;
-                width: 50px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
+                @include profile-letter;
             }
         }
     }

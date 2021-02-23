@@ -1,0 +1,53 @@
+@import '../style.scss';
+
+.conversation-view {
+    height: 100vh;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    .header-bar {
+        height: 100px;
+        display: flex;
+        align-items: center;
+        .profile-letter {
+            @include profile-letter;
+        }
+        .name {
+            @include h4;
+            margin-left: $m5;
+            flex-grow: 1;
+        }
+    }
+    .message-container {
+        flex-grow: 1;
+    }
+    .conversation-view-input-container {
+        width: 100%;
+        padding: $p5 $p3;
+        background-color: $secondary-color;
+        box-sizing: border-box;
+        display: flex;
+        input {
+            @include h3;
+            border-radius: $input-border-radius;
+            border: 1px $border-color solid;
+            flex-grow: 1;
+            padding: 0px $p5;
+        }
+        i {
+            font-size: 20px;
+            margin: 0px $m5;
+            height: 50px;
+            width: 50px;
+            box-sizing: border-box;
+            color: $on-main-color;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            &:hover {
+                background-color: green;
+            }
+        }
+    }
+}

@@ -8,9 +8,10 @@ import { AppState } from "../state/AppState";
 import { FriendState } from "../state/FriendState";
 import { EOperationStatus, OperationStatus } from "../state/OperationStatusState";
 import { UserState } from "../state/UserState";
-import { FriendBar } from "./FriendBar";
+import { ConversationView } from "./ConversationView";
 import { LoadingIcon } from "./LoadingIcon";
 import './MainPage.scss';
+import { SideBar } from "./SideBar";
 import { StrangerView } from "./StrangerView";
 
 interface MainPageProps {
@@ -80,11 +81,12 @@ export const MainPage = () => {
                 )
             }
         } else if (showConversation){
-            return (
-                <div>
-                    Conversation
-                </div>
-            )
+            if (selectedUser) {
+                //this condition by right is always true
+                return (
+                    <ConversationView selectedUser={selectedUser}></ConversationView>
+                )
+            }
         }
     }
 
@@ -98,7 +100,7 @@ export const MainPage = () => {
         return (
             <div className="main-page">
                 <div className="friend-bar-container">
-                    <FriendBar onUserSelected={onUserSelected}></FriendBar>
+                    <SideBar onUserSelected={onUserSelected}></SideBar>
                 </div>
                 <div className="main-pane">
                     { showUserInfoOrConversation() }

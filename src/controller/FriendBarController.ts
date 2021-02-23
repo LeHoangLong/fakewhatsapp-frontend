@@ -31,10 +31,11 @@ export class FriendBarController {
         if (name !== '') {
             let offset: number = 0;
             while (true) {
-                let friends = await this.friendDispatcher.findFriendByName(name, offset, 10);
+                let friends = await this.friendDispatcher.findFriendByName(name, offset, config.DEFAULT_PAGE_SIZE);
                 if (friends.length === 0) {
                     break;
                 }
+                offset += friends.length;
             }
         }
     }
@@ -54,10 +55,12 @@ export class FriendBarController {
     }
 
     async onLoadingIconShownHandler(searchValue: string, friendState: FriendState, foundUserState: FoundUserState, fetchFriendOperationStatus: OperationStatus, foundUserOperationStatus: OperationStatus) {
-        if (searchValue === '') {
-            this.fetchNewFriends(friendState, friendState.allFriends.length, friendState.allFriends.length + config.DEFAULT_PAGE_SIZE, fetchFriendOperationStatus);
-        } else {
-            this.findUsersByName(searchValue, foundUserState.allUsers.length, foundUserState.allUsers.length + config.DEFAULT_PAGE_SIZE, foundUserOperationStatus.status);
+        if (!friendState.isEndReached) {
+            if (searchValue === '') {
+                this.fetchNewFriends(friendState, friendState.allFriends.length, friendState.allFriends.length + config.DEFAULT_PAGE_SIZE, fetchFriendOperationStatus);
+            } else {
+                this.findUsersByName(searchValue, foundUserState.allUsers.length, foundUserState.allUsers.length + config.DEFAULT_PAGE_SIZE, foundUserOperationStatus.status);
+            } 
         }
     }
     

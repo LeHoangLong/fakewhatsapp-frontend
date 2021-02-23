@@ -8,6 +8,8 @@ export enum EOperationType {
     SEND_INVITATION = 'SEND_INVITATION',
     DELETE_INVITATION = 'DELETE_INVITATION',
     ACCEPT_INVITATION = 'ACCEPT_INVITATION',
+    FETCH_CHAT = 'FETCH_CHAT',
+    FETCH_CHAT_TO_USER = 'FETCH_CHAT_TO_USER',
 }
 
 export enum EOperationStatus {
@@ -46,4 +48,6 @@ export interface OperationStatusState {
     readonly [EOperationType.SEND_INVITATION]: OperationStatus; 
     readonly [EOperationType.DELETE_INVITATION]: OperationStatus;
     readonly [EOperationType.ACCEPT_INVITATION]: OperationStatus;
+    readonly [EOperationType.FETCH_CHAT]: OperationStatus;
+    readonly [EOperationType.FETCH_CHAT_TO_USER]: OperationStatus;
 }

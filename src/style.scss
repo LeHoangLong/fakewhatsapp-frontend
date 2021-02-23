@@ -122,3 +122,15 @@ h1 {
         width: 5px;
     }
 }
+
+@mixin profile-letter {
+    @include h3;
+    border-radius: 50%;
+    background-color: $secondary-color;
+    margin: $m5;
+    height: 50px;
+    width: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

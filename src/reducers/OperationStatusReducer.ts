@@ -13,6 +13,8 @@ export const initialOperationStatusState: OperationStatusState = {
     [EOperationType.SEND_INVITATION]: initialOperationStatus,
     [EOperationType.DELETE_INVITATION]: initialOperationStatus,
     [EOperationType.ACCEPT_INVITATION]: initialOperationStatus,
+    [EOperationType.FETCH_CHAT]: initialOperationStatus,
+    [EOperationType.FETCH_CHAT_TO_USER]: initialOperationStatus,
 };
 
 export function operationStatusReducer(state: OperationStatusState, action: BaseAction): OperationStatusState {
