@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ConversationController } from "../controller/ConversationController";
 import { ChatDispatcher } from "../dispatcher/ChatDispatcher";
@@ -9,6 +9,7 @@ import './ConversationView.scss';
 
 interface MapStateToProps {
     chatState: ChatState,
+    thisUser: User,
 }
 
 interface ConversationProps {
@@ -16,8 +17,9 @@ interface ConversationProps {
 }
 
 export const ConversationView = ({selectedUser}: ConversationProps) => {
-    let {chatState} = useSelector<AppState, MapStateToProps>((state: AppState): MapStateToProps => ({
+    let {chatState, thisUser} = useSelector<AppState, MapStateToProps>((state: AppState): MapStateToProps => ({
         chatState: state.chatState,
+        thisUser: state.userState.user!,
     }));
 
     let dispatch = useDispatch();
@@ -36,9 +38,18 @@ export const ConversationView = ({selectedUser}: ConversationProps) => {
         controller.onTextValueChanged(selectedUser.infoId, event.target.value);
     }
 
+
     let textValue = chatState.writingMessagesToUser.get(selectedUser.infoId);
     if (textValue === undefined) {
         textValue = '';
+    }
+
+    useEffect(() => {
+        controller.onSelectedUserChanged(thisUser.infoId, selectedUser.infoId, chatState);
+    }, [controller, thisUser, selectedUser, chatState]);
+
+    function onSendButtonClick() {
+        controller.onSendText(chatState.selectedChat, thisUser, selectedUser.infoId, textValue!);
     }
 
     return (
@@ -56,7 +67,9 @@ export const ConversationView = ({selectedUser}: ConversationProps) => {
             </div>
             <div className="conversation-view-input-container">
                 <input value={textValue} onChange={onTextValueChanged} type="text"></input>
-                <i className="fas fa-paper-plane"></i>
+                <button className="send-button" onClick={onSendButtonClick}>
+                    <i className="fas fa-paper-plane"></i>
+                </button>
             </div>
         </div>
     )

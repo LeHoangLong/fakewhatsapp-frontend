@@ -1,4 +1,6 @@
 import { IChatDispatcher, IChatDispatcherChatToUserIdDoesNotExists } from "../dispatcher/IChatDispatcher";
+import { Chat } from "../model/ChatModel";
+import { User } from "../model/UserModel";
 import { ChatState } from "../state/ChatState";
 
 export class ConversationController {
@@ -29,5 +31,12 @@ export class ConversationController {
 
     onTextValueChanged(selectedUserInfoId: number, content: string) {
         this.chatDispatcher.setWritingMessageToUser(selectedUserInfoId, content);
+    }
+
+    async onSendText(chat: Chat | null, thisUser: User, otherUserInfoId: number, content: string) {
+        if (chat === null) {
+            chat = await this.chatDispatcher.createChat(thisUser.infoId, otherUserInfoId);
+        }
+        await this.chatDispatcher.sendMessageToChat(thisUser, chat.id, content);
     }
 }
