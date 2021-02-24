@@ -6,6 +6,7 @@ import { ChatState } from "../state/ChatState";
 import { EOperationStatus, OperationStatus } from "../state/OperationStatusState";
 import { ChatBar } from "./ChatBar";
 import { FriendBar } from "./FriendBar";
+import { ProfileBar } from "./ProfileBar";
 import { SearchBar } from "./SearchBar";
 import './SideBar.scss';
 
@@ -40,6 +41,9 @@ export const SideBar = ({onUserSelected}: FriendBarProps) => {
 
     return (
         <div className="side-bar">
+            <div className="profile-bar-container">
+                <ProfileBar></ProfileBar>
+            </div>
             <div className="search-bar-container">
                 <SearchBar onTextChange={onSearchFriendNameChangeHandler}></SearchBar>
             </div>

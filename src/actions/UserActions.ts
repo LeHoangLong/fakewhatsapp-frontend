@@ -16,8 +16,8 @@ export class UserActionSetLoginStatus extends BaseAction {
 }
 
 export class UserActionSetUser extends BaseAction {
-    readonly user: User;
-    constructor(user: User) {
+    readonly user: User | undefined;
+    constructor(user: User | undefined) {
         super(EUserActionTypes.SET_USER);
         this.user = user;
     }

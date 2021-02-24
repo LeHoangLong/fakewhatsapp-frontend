@@ -1,10 +1,10 @@
 import { User } from "../model/UserModel";
 
 export enum UserStatus {
-    INIT,
-    LOGGED_IN,
-    LOGGED_OUT,
-    NOT_LOGGED_IN
+    INIT = 'INIT',
+    LOGGED_IN = 'LOGGED_IN',
+    LOGGED_OUT = 'LOGGED_OUT',
+    NOT_LOGGED_IN = 'NOT_LOGGED_IN'
 }
 
 export class UserState {

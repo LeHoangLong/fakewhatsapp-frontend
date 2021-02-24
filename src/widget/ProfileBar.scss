@@ -1,0 +1,66 @@
+@import '../style.scss';
+
+.profile-bar {
+    display: flex;
+    justify-content: space-between;
+    background-color: $header-background-color;
+    .profile-letter {
+        @include h3;
+        background-color: $on-header-background-color;
+        border-radius: 50%;
+        display: flex;
+    }
+    .option {
+        position: relative;
+        .expand-option-button {
+            background-color: transparent;
+            border-radius: 50%;
+            height: 30px;
+            width: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            outline: none;
+            border: 0px;
+            &:hover {
+                background-color: $secondary-color-2;
+            }
+        }
+        .action-container {
+            position: absolute;
+            top: 100%;
+            right: 0px;
+            button {
+                @include h4;
+                border: 0px;
+                outline: none;
+                background-color: white;    
+                width: 100%;
+                padding-left: $p3;
+                padding-right: $p3;
+                padding-top: $p5;
+                padding-bottom: $p5;
+                overflow: hidden;
+                white-space: nowrap;
+                text-align: left;
+                &:hover {
+                    background-color: $secondary-color;
+                }
+            }
+            box-shadow: 0px 0px 5px 2px $shadow-color;
+            transition: width 0.5s, height 0.5s, opacity 0.5s;
+        }
+        .action-container-hidden {
+            @extend .action-container; 
+            width: 0px;
+            height: 0px;
+            opacity: 0;
+        }
+        .action-container-show {
+            @extend .action-container; 
+            width: 200px;
+            height: auto;
+            opacity: 1;
+        }
+    }
+}

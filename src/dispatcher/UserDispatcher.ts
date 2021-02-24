@@ -26,12 +26,12 @@ export class UserDispatcher implements IUserDispatcher {
         try {
             let result = await axios.get(`${config.BACKEND_URL}/user/info/`);
             let user = new User(result.data.name, result.data.userInfoId);
-            this.dispatch(new UserActionSetLoginStatus(UserStatus.LOGGED_IN).toPlainObject());
             this.dispatch(new UserActionSetUser(user).toPlainObject());
+            this.dispatch(new UserActionSetLoginStatus(UserStatus.LOGGED_IN).toPlainObject());
             this.dispatch(new OperationStatusActionSetStatus(EOperationType.GET_USER_INFO, EOperationStatus.SUCCESS).toPlainObject());
         } catch (error) {
             this.dispatch(new UserActionSetLoginStatus(UserStatus.NOT_LOGGED_IN).toPlainObject());
-            if (error.response.status !== 401 && error.response.status !== 403) {
+            if (!('response' in error) || (error.response.status !== 401 && error.response.status !== 403)) {
                 this.dispatch(new OperationStatusActionSetStatus(EOperationType.GET_USER_INFO, EOperationStatus.ERROR).toPlainObject());
                 throw error;
             }
@@ -81,5 +81,10 @@ export class UserDispatcher implements IUserDispatcher {
         } finally {
             this.dispatch(new OperationStatusActionSetStatus(EOperationType.SIGN_UP, EOperationStatus.IDLE).toPlainObject());
         }
+    }
+
+    async dispatchLogout(): Promise<void> {
+        this.dispatch(new UserActionSetUser(undefined).toPlainObject());
+        this.dispatch(new UserActionSetLoginStatus(UserStatus.LOGGED_OUT).toPlainObject());
     }
 }

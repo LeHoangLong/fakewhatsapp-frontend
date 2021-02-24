@@ -44,7 +44,7 @@
     position: relative;
     .title {
         @include h2;
-        color: $secondary-color;
+        color: $secondary-color-3;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -58,7 +58,7 @@
         width: 100%;
         label {
             @include h3;
-            color: $secondary-color;
+            color: $secondary-color-3;
             margin-bottom: $m6;
             margin-top: $m6;
         }

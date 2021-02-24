@@ -4,6 +4,7 @@ $blue-1: #001745;
 $blue-2: #023E8A;
 $blue-3: #7adeff;
 
+$grey-1: #aba9a9;
 $grey-2: #EDEDED;
 $grey-3: rgba(237, 237, 237, 0.5);
 $grey-4: #E0e0e0;
@@ -11,7 +12,8 @@ $grey-5: #b5b5b5;
 
 $primary-color: $blue-3;
 $main-background-color: $blue-3;
-$header-background-color: $blue-1;
+$header-background-color: $grey-2;
+$on-header-background-color: $grey-3;
 $header-selected-background-color: $blue-2;
 $on-main-color: white;
 $border-color: $grey-3;
@@ -30,6 +32,7 @@ $error-button-color: red;
 $on-error-button-color: white;
 $error-button-pressed-color: #ad0000;
 $secondary-color-2: $shadow-color;
+$secondary-color-3: $grey-1;
 
 $input-border-radius: 12px;
 $standard-button-radius: 12px;
