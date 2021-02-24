@@ -13,6 +13,10 @@ export class IChatStateErrorChatIdNotFound {
     }
 }
 
+export class ChatStateErrorChatToUserNotFound {
+
+}
+
 export class ChatState {
     constructor(
         public chats: Chat[],
@@ -68,7 +72,15 @@ export class ChatState {
                 latestMessageSentTime = prevChat.latestMessageSentTime;
                 latestMessageContent = prevChat.latestMessageContent;
             }
-            let newMessages = prevChat.messages.concat([message]);
+            let messageIndex = prevChat.messages.findIndex((element) => element.id === message.id);
+            let newMessages: Message[];
+            if (messageIndex === -1) {
+                newMessages = prevChat.messages.concat([message]);
+            } else {
+                newMessages = prevChat.messages.slice();
+                newMessages[messageIndex] = message;
+            }
+            
             this.sortMessages(newMessages);
             newChats[index] = new Chat(
                 prevChat.id,
@@ -130,13 +142,13 @@ export class ChatState {
         return newChats;
     }
 
-    doesChatToUserExists(thisUserInfoId: number, userInfoId: number): boolean {
+    findChatToUser(thisUserInfoId: number, userInfoId: number): Chat | null {
         for (let i = 0;i < this.chats.length; i++) {
             if (this.chats[i].participantsId.includes(thisUserInfoId) && this.chats[i].participantsId.includes(userInfoId) && this.chats[i].participantsId.length === 2) {
-                return true;
+                return this.chats[i];
             }
         }
-        return false;
+        return null;
     }
 
     setWritingMessageToUser(userInfoId: number, content: string): Map<number, string> {

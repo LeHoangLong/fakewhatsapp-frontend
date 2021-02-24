@@ -21,6 +21,6 @@ export interface IChatDispatcher {
     setWritingMessageToUser(recipientInfoId: number, content: string): void;
     sendMessageToChat(sender: User, chatId: number, content: string): Promise<Message>;
     createChat(thisUserInfoId: number, otherUserInfoId: number): Promise<Chat>;
-    fetchMessagesFromChat(chatId: number, findUserDelegate: FindUserDelegate): Promise<Message[]>;
+    fetchMessagesFromChat(chatId: number, limit: number, offset: number, findUserDelegate: FindUserDelegate): Promise<Message[]>;
     updateChatMessageStatus(chatId: number, chatMessageStatus: EChatMessageStatus): Promise<void>;
 }

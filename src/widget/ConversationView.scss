@@ -9,6 +9,7 @@
         height: 100px;
         display: flex;
         align-items: center;
+        background-color: $secondary-color;
         .profile-letter {
             @include profile-letter;
         }
@@ -32,7 +33,12 @@
             flex-grow: 1;
             padding-right: $m3;
             word-wrap: break-word;
-            max-width: 800px;
+            @media screen and (min-width: 900px){
+                max-width: 800px;
+            }
+            @media screen and (max-width: 899px) {
+                max-width: 300px;
+            }
         }
         .time {
             @include body-2;
@@ -51,6 +57,7 @@
         flex-direction: column-reverse;
         padding-top: $p5;
         padding-bottom: $p5;
+        background-color: $secondary-color-2;
         &::-webkit-scrollbar {
             width: 10px;
         }
@@ -95,7 +102,7 @@
             }
             .message-them {
                 @include message-box;
-                background-color: $secondary-color;
+                background-color: white;
             }
         }
     }

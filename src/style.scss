@@ -4,9 +4,10 @@ $blue-1: #001745;
 $blue-2: #023E8A;
 $blue-3: #7adeff;
 
-$grey-2: #3F3F45;
-$grey-3: #56565E;
-$grey-4: #858591;
+$grey-2: #EDEDED;
+$grey-3: rgba(237, 237, 237, 0.5);
+$grey-4: #E0e0e0;
+$grey-5: #b5b5b5;
 
 $primary-color: $blue-3;
 $main-background-color: $blue-3;
@@ -15,7 +16,7 @@ $header-selected-background-color: $blue-2;
 $on-main-color: white;
 $border-color: $grey-3;
 $secondary-color: $grey-2;
-$shadow-color: $grey-4;
+$shadow-color: $grey-5;
 $link-color: $blue-2;
 $hover-link-color: $blue-1;
 $primary-button-color: $blue-2;
@@ -24,10 +25,11 @@ $on-primary-button-color: white;
 $error-text-color: red;
 $progress-indicator-color: $blue-3;
 $scrollbar-color: $blue-3;
-$secondary-text-color: $grey-4;
+$secondary-text-color: $grey-5;
 $error-button-color: red;
 $on-error-button-color: white;
 $error-button-pressed-color: #ad0000;
+$secondary-color-2: $shadow-color;
 
 $input-border-radius: 12px;
 $standard-button-radius: 12px;

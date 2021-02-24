@@ -13,7 +13,7 @@ interface MapStateToProps {
 }
 
 export const ChatBar = () => {
-    let {fetchChatStatus, chatState} = useSelector<AppState, MapStateToProps>((state: AppState): MapStateToProps => ({
+    let {fetchChatStatus} = useSelector<AppState, MapStateToProps>((state: AppState): MapStateToProps => ({
         fetchChatStatus: state.operationStatusState.FETCH_CHAT,
         chatState: state.chatState,
     }));

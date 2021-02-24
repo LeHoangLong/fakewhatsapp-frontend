@@ -31,10 +31,11 @@ export const ConversationView = ({selectedUser}: ConversationProps) => {
     let {chatState, thisUser, friendState} = useSelector<AppState, MapStateToProps>(MapStateToProps);
 
     let dispatch = useDispatch();
+    let inputTextRef = useRef<HTMLInputElement>(null);
     let chatDispatcher = useRef(new ChatDispatcher(dispatch)).current;
     let friendDispatcher = useRef(new FriendDispatcher(dispatch)).current;
-    let controller  = useRef(new ConversationController(chatDispatcher, friendDispatcher)).current;
-    let inputTextRef = useRef<HTMLInputElement>(null);
+    let controller = useRef(new ConversationController(chatDispatcher, friendDispatcher)).current;
+    let previousUserInfoId = useRef<number | null>(null);
 
     function showMessages() {
         if (chatState.selectedChatId !== null) {
@@ -87,17 +88,27 @@ export const ConversationView = ({selectedUser}: ConversationProps) => {
     if (textValue === undefined) {
         textValue = '';
     }
+    
+    useEffect(() => {
+        let interval = setInterval(() => {
+            controller.onPeriodicMessageFetch(thisUser, chatState, friendState);
+        }, 1000);
+        return () => clearInterval(interval);
+    }, [controller, thisUser, chatState, friendState]);
 
     useEffect(() => {
-        controller.onSelectedUserChanged(thisUser.infoId, selectedUser.infoId, chatState);
+        if (previousUserInfoId.current !== selectedUser.infoId) {
+            controller.onSelectedUserChanged(thisUser.infoId, selectedUser.infoId, chatState);
+        }
+        previousUserInfoId.current = selectedUser.infoId;
     }, [controller, thisUser, selectedUser, chatState]);
 
     useEffect(() => {
         if (chatState.selectedChatId !== null) {
             let selectedChat = chatState.findChatById(chatState.selectedChatId);
-            controller.onSelectedChatChanged(selectedChat, friendState);
+            controller.onSelectedChatChanged(thisUser, selectedChat, friendState);
         }
-    }, [chatState, controller, friendState]);
+    }, [chatState, controller, friendState, thisUser]);
 
     function onSendButtonClick() {
         controller.onSendText(chatState.selectedChatId, thisUser, selectedUser.infoId, textValue!);

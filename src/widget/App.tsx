@@ -16,7 +16,7 @@ export const App = () => {
         };
     });
 
-    if (userState.status === UserStatus.INIT || userState.status === UserStatus.LOGGED_IN) {
+    if (userState.status === UserStatus.LOGGED_IN) {
         return <MainPage></MainPage>
     } else {
         return <LoginPage></LoginPage>

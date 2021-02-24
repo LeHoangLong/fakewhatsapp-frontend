@@ -15,7 +15,6 @@ export class ChatDispatcher implements IChatDispatcher {
     constructor(
         public dispatch: Dispatch<BaseAction>
     ) {
-
     }
 
     async fetchRecentChats(offset: number, limit: number): Promise<void> {
@@ -86,7 +85,6 @@ export class ChatDispatcher implements IChatDispatcher {
             )
             this.dispatch(new ChatActionInsertChat(chat).toPlainObject());
             this.dispatch(new OperationStatusActionSetStatus(EOperationType.FETCH_CHAT_TO_USER, EOperationStatus.SUCCESS).toPlainObject());
-            console.log('finish');
             return chat;
         } catch (error) {
             if (error.response.status === 404) {
@@ -165,10 +163,15 @@ export class ChatDispatcher implements IChatDispatcher {
         }
     }
 
-    async fetchMessagesFromChat(chatId: number, findUserDelegate: FindUserDelegate): Promise<Message[]> {
+    async fetchMessagesFromChat(chatId: number, limit: number, offset: number, findUserDelegate: FindUserDelegate): Promise<Message[]> {
         try {
             this.dispatch(new OperationStatusActionSetStatus(EOperationType.FETCH_MESSAGES_FROM_CHAT, EOperationStatus.IN_PROGRESS).toPlainObject());
-            let result = await axios.get(`${config.BACKEND_URL}/chats/conversation/${chatId}/messages`);
+            let result = await axios.get(`${config.BACKEND_URL}/chats/conversation/${chatId}/messages`, {
+                params: {
+                    limit: limit,
+                    offset: offset,
+                }
+            });
             let ret: Message[] = [];
             let resultRows = result.data.rows;
             for (let i = 0; i < resultRows.length; i++) {

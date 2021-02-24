@@ -2,10 +2,11 @@
 
 .main-page {
     height: 100vh;
-    width: 100vw;
+    max-width: 100vw;
     display: flex;
     .friend-bar-container {
-        width: 350px;
+        min-width: 350px;
+        max-width: 350px;
         height: 100%;
     }
     .main-pane {

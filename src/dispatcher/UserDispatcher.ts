@@ -29,10 +29,12 @@ export class UserDispatcher implements IUserDispatcher {
             this.dispatch(new UserActionSetLoginStatus(UserStatus.LOGGED_IN).toPlainObject());
             this.dispatch(new UserActionSetUser(user).toPlainObject());
             this.dispatch(new OperationStatusActionSetStatus(EOperationType.GET_USER_INFO, EOperationStatus.SUCCESS).toPlainObject());
-        } catch (err) {
+        } catch (error) {
             this.dispatch(new UserActionSetLoginStatus(UserStatus.NOT_LOGGED_IN).toPlainObject());
-            this.dispatch(new OperationStatusActionSetStatus(EOperationType.GET_USER_INFO, EOperationStatus.ERROR).toPlainObject());
-            throw err;
+            if (error.response.status !== 401 && error.response.status !== 403) {
+                this.dispatch(new OperationStatusActionSetStatus(EOperationType.GET_USER_INFO, EOperationStatus.ERROR).toPlainObject());
+                throw error;
+            }
         } finally {
             this.dispatch(new OperationStatusActionSetStatus(EOperationType.GET_USER_INFO, EOperationStatus.IDLE).toPlainObject());
         }
