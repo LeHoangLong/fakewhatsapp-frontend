@@ -1,10 +1,23 @@
 import { Chat, EChatMessageStatus } from '../model/ChatModel';
 import { EMessageStatus, Message } from '../model/MessageModel';
+
+export class IChatStateErrorChatIdNotFound {
+    constructor(
+        public chatId: number,
+    ){
+
+    }
+
+    toString(): string {
+        return `Chat with id ${this.chatId} not found`
+    }
+}
+
 export class ChatState {
     constructor(
         public chats: Chat[],
         public isEndReached: boolean,
-        public selectedChat: Chat | null,
+        public selectedChatId: number | null,
         public writingMessagesToUser: Map<number, string>
     ){
 
@@ -26,6 +39,21 @@ export class ChatState {
         return newChats.sort((a, b) => -(a.latestMessageSentTime.getTime() - b.latestMessageSentTime.getTime()));
     }
 
+    private sortMessages(messages: Message[]): void {
+        messages.sort((a, b) => {
+            if (a.sentTime !== null && b.sentTime !== null) {
+                return -(a.sentTime.getTime() - b.sentTime.getTime());
+            } else if (a.sentTime !== null) {
+                // if a.sent time is not null, we push it to the higher index
+                return 1;
+            } else if (b.sentTime !== null) {
+                return -1;
+            } else {
+                return 0;
+            }
+        });
+    }
+
     insertMessage(chatId: number, message: Message): Chat[] {
         let newChats = this.chats.slice();
         let index = this.chats.findIndex((element) => element.id === chatId);
@@ -40,12 +68,14 @@ export class ChatState {
                 latestMessageSentTime = prevChat.latestMessageSentTime;
                 latestMessageContent = prevChat.latestMessageContent;
             }
+            let newMessages = prevChat.messages.concat([message]);
+            this.sortMessages(newMessages);
             newChats[index] = new Chat(
                 prevChat.id,
                 latestMessageContent,
                 latestMessageSentTime,
                 prevChat.participantsId,
-                prevChat.messages.concat([message]),
+                newMessages,
                 prevChat.chatMessageStatus,
             )
         }
@@ -87,6 +117,7 @@ export class ChatState {
                 latestMessageSentTime = prevChat.latestMessageSentTime;
                 latestMessageContent = prevChat.latestMessageContent;
             }
+            this.sortMessages(newMessages);
             newChats[index] = new Chat(
                 prevChat.id,
                 latestMessageContent,
@@ -129,5 +160,14 @@ export class ChatState {
             );
         }
         return newChats;   
+    }
+
+    findChatById(chatId: number): Chat {
+        let index = this.chats.findIndex((element) => element.id === chatId);
+        if (index !== -1) {
+            return this.chats[index];
+        } else {
+            throw new IChatStateErrorChatIdNotFound(chatId);
+        }
     }
 }

@@ -1,7 +1,7 @@
 import axios from "axios";
 import { Dispatch } from "react";
 import { BaseAction } from "../actions/BaseActions";
-import { ChatActionAddChat,ChatActionAddMessage,ChatActionUpdateMessage,ChatActionInsertChat, ChatActionSetSelectedChat, ChatActionSetSelectedPendingMessage, ChatActionUpdateChatMessageStatus } from "../actions/ChatActions";
+import { ChatActionAddChat,ChatActionAddMessage,ChatActionUpdateMessage,ChatActionInsertChat, ChatActionSetSelectedChatId, ChatActionSetSelectedPendingMessage, ChatActionUpdateChatMessageStatus } from "../actions/ChatActions";
 import { OperationStatusActionSetStatus } from "../actions/OperationStatusActions";
 import { config } from "../config";
 import { Chat, EChatMessageStatus } from "../model/ChatModel";
@@ -9,7 +9,7 @@ import { EMessageStatus, Message } from "../model/MessageModel";
 import { User } from "../model/UserModel";
 import { BaseOperationStatusDetail, EOperationStatus, EOperationType } from "../state/OperationStatusState";
 import { IChatDispatcher, IChatDispatcherChatToUserIdDoesNotExists, FindUserDelegate } from "./IChatDispatcher";
-import { uuid } from 'uuidv4';
+import { v4 } from 'uuid';
 
 export class ChatDispatcher implements IChatDispatcher {
     constructor(
@@ -35,7 +35,7 @@ export class ChatDispatcher implements IChatDispatcher {
                     new Chat(
                         resultData.rows[i].id,
                         resultData.rows[i].latestMessageContent,
-                        resultData.rows[i].latestMessageSentTime,
+                        new Date(resultData.rows[i].latestMessageSentTime),
                         [],
                         [],
                         EChatMessageStatus.NOT_FETCHED
@@ -86,6 +86,7 @@ export class ChatDispatcher implements IChatDispatcher {
             )
             this.dispatch(new ChatActionInsertChat(chat).toPlainObject());
             this.dispatch(new OperationStatusActionSetStatus(EOperationType.FETCH_CHAT_TO_USER, EOperationStatus.SUCCESS).toPlainObject());
+            console.log('finish');
             return chat;
         } catch (error) {
             if (error.response.status === 404) {
@@ -105,8 +106,8 @@ export class ChatDispatcher implements IChatDispatcher {
         }
     }
 
-    setSelectedChat(chat: Chat | null): void {
-        this.dispatch(new ChatActionSetSelectedChat(chat).toPlainObject());
+    setSelectedChatId(chatId: number | null): void {
+        this.dispatch(new ChatActionSetSelectedChatId(chatId).toPlainObject());
     }
 
     setWritingMessageToUser(recipientInfoId: number, content: string): void {
@@ -114,7 +115,7 @@ export class ChatDispatcher implements IChatDispatcher {
     }
 
     async sendMessageToChat(sender: User, chatID: number, content: string): Promise<Message> {
-        let token = uuid();
+        let token = v4();
         let message = new Message(
             null,
             sender.infoId,
@@ -129,7 +130,7 @@ export class ChatDispatcher implements IChatDispatcher {
             content: content,
         });
         let resultData = result.data;
-        this.dispatch(new ChatActionUpdateMessage(chatID, resultData.message.id, token, resultData.sentTime, EMessageStatus.SENT).toPlainObject());
+        this.dispatch(new ChatActionUpdateMessage(chatID, resultData.message.id, token, new Date(resultData.message.sentTime), EMessageStatus.SENT).toPlainObject());
         return message;
     }
     
@@ -143,7 +144,7 @@ export class ChatDispatcher implements IChatDispatcher {
             let chat = new Chat(
                 resultData.id,
                 resultData.latestMessageContent,
-                resultData.latestMessageSentTime,
+                new Date(resultData.latestMessageSentTime),
                 [thisUserInfoId, otherUserInfoId],
                 [],
                 EChatMessageStatus.NOT_FETCHED
@@ -177,7 +178,7 @@ export class ChatDispatcher implements IChatDispatcher {
                     resultRows[i].senderInfoId,
                     user.name,
                     resultRows[i].content,
-                    resultRows[i].sentTime,
+                    new Date(resultRows[i].sentTime),
                     EMessageStatus.SENT,
                     null,
                 );

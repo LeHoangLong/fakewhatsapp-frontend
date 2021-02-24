@@ -114,6 +114,10 @@ export const FriendBar = ({onUserSelected, searchName}: FriendBarProps) => {
 
         for (let i = 0; i < friendState.allFriends.length; i++) {
             let friend: User = friendState.allFriends[i];
+            console.log('thisUser.infoId');
+            console.log(thisUser.infoId);
+            console.log('friend.infoId');
+            console.log(friend.infoId);
             if (friend.name.includes(searchName) && friend.infoId !== thisUser.infoId) {
                 friends.push(friendState.allFriends[i]);
             }

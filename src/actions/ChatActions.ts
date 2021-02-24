@@ -5,7 +5,7 @@ import { BaseAction } from "./BaseActions";
 export const EChatActionTypes = {
     ADD_CHAT: Symbol('ADD_CHAT'),
     INSERT_CHAT: Symbol('INSERT_CHAT'), //insert chat will replace if there is existing chat with the same id
-    SET_SELECTED_CHAT: Symbol('SET_SELECTED_CHAT'),
+    SET_SELECTED_CHAT_ID: Symbol('SET_SELECTED_CHAT_ID'),
     SET_PENDING_MESSAGE: Symbol('SET_PENDING_MESSAGE'),
     ADD_MESSAGE: Symbol('ADD_MESSAGE'),
     UPDATE_MESSAGE: Symbol('UPDATE_MESSAGE'), // If both token and message id are present, message id will also be updated using token
@@ -29,11 +29,11 @@ export class ChatActionInsertChat extends BaseAction {
     }
 }
 
-export class ChatActionSetSelectedChat extends BaseAction {
+export class ChatActionSetSelectedChatId extends BaseAction {
     constructor(
-        public chat: Chat | null,
+        public chatId: number | null,
     ) {
-        super(EChatActionTypes.SET_SELECTED_CHAT);
+        super(EChatActionTypes.SET_SELECTED_CHAT_ID);
     }
 }
 

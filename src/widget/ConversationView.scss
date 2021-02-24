@@ -18,8 +18,86 @@
             flex-grow: 1;
         }
     }
-    .message-container {
+    @mixin message-box {
+        padding: $p5;
+        border-radius: $standard-button-radius;
+        margin-right: $m5;
+        margin-left: $m5;
+        margin-top: 3px;
+        position: relative;
+        display: flex;
+        flex-wrap: wrap;
+        .message-content {
+            @include h4;
+            flex-grow: 1;
+            padding-right: $m3;
+            word-wrap: break-word;
+            max-width: 800px;
+        }
+        .time {
+            @include body-2;
+            position: absolute;
+            color: $secondary-text-color;
+            bottom: 10px;
+            right: 10px;
+        }
+    }
+
+    .messages-container {
+        @include myscrollbar;
         flex-grow: 1;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column-reverse;
+        padding-top: $p5;
+        padding-bottom: $p5;
+        &::-webkit-scrollbar {
+            width: 10px;
+        }
+        .message-me-container {
+            max-width: 100%;
+            display: flex;
+            justify-content: flex-end;
+            .first-message {
+                &::after {
+                    content: "";
+                    border-top: 15px $primary-color solid;
+                    border-bottom: 0px;
+                    border-right: 8px transparent solid;
+                    border-left: 10px transparent solid;
+                    position: absolute;
+                    left: 100%;
+                    top: 0px;
+                    transform: translate(-10px, 0%);
+                }
+            }
+            .message-me {
+                @include message-box;
+                background-color: $primary-color;
+            }
+        }
+        .message-them-container {
+            max-width: 100%;
+            display: flex;
+            justify-content: flex-start;
+            .first-message {
+                &::before {
+                    content: "";
+                    border-top: 15px $secondary-color solid;
+                    border-bottom: 0px;
+                    border-right: 10px transparent solid;
+                    border-left: 8px transparent solid;
+                    position: absolute;
+                    left: 0px;
+                    top: 0px;
+                    transform: translate(-8px, 0%);
+                }
+            }
+            .message-them {
+                @include message-box;
+                background-color: $secondary-color;
+            }
+        }
     }
     .conversation-view-input-container {
         width: 100%;
@@ -33,6 +111,7 @@
             border: 1px $border-color solid;
             flex-grow: 1;
             padding: 0px $p5;
+            outline: none;
         }
         .send-button {
             font-size: 20px;

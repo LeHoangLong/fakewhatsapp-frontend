@@ -79,10 +79,10 @@ export class FriendDispatcher implements IFriendDispatcher {
     async findFriendByUserId(userInfoId: number): Promise<User> {
         let result = await axios.get(`${config.BACKEND_URL}/user/by-id/${userInfoId}`);
         let user = new User(
-            result.data.id,
             result.data.name,
+            result.data.userInfoId,
         )
-        this.dispatch(new FriendActionAddFriends([user], null));
+        this.dispatch(new FriendActionAddFriends([user], null).toPlainObject());
         return user;
     }
 }

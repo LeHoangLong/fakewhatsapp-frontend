@@ -1,5 +1,5 @@
 import { BaseAction } from "../actions/BaseActions";
-import { ChatActionAddChat, ChatActionAddMessage, ChatActionUpdateMessage, ChatActionInsertChat, ChatActionSetSelectedChat, ChatActionSetSelectedPendingMessage, EChatActionTypes, ChatActionUpdateChatMessageStatus } from "../actions/ChatActions";
+import { ChatActionAddChat, ChatActionAddMessage, ChatActionUpdateMessage, ChatActionInsertChat, ChatActionSetSelectedChatId , ChatActionSetSelectedPendingMessage, EChatActionTypes, ChatActionUpdateChatMessageStatus } from "../actions/ChatActions";
 import { ChatState } from "../state/ChatState";
 
 export const initialChatState: ChatState = new ChatState([], true, null, new Map());
@@ -11,7 +11,7 @@ export const chatReducer = (state: ChatState = initialChatState, action: BaseAct
             return new ChatState(
                 state.concat(addChatAction.chats),
                 addChatAction.isEndReached,
-                state.selectedChat,
+                state.selectedChatId,
                 state.writingMessagesToUser,
             )
         case EChatActionTypes.INSERT_CHAT:
@@ -19,15 +19,15 @@ export const chatReducer = (state: ChatState = initialChatState, action: BaseAct
             return new ChatState(
                 state.insertChat(insertChatAction.chat),
                 state.isEndReached,
-                state.selectedChat,
+                state.selectedChatId,
                 state.writingMessagesToUser,
             );
-        case EChatActionTypes.SET_SELECTED_CHAT:
-            let setSelectedChat = action as ChatActionSetSelectedChat;
+        case EChatActionTypes.SET_SELECTED_CHAT_ID:
+            let setSelectedChat = action as ChatActionSetSelectedChatId;
             return new ChatState(
                 state.chats,
                 state.isEndReached,
-                setSelectedChat.chat,
+                setSelectedChat.chatId,
                 state.writingMessagesToUser,
             );
         case EChatActionTypes.SET_PENDING_MESSAGE:
@@ -35,7 +35,7 @@ export const chatReducer = (state: ChatState = initialChatState, action: BaseAct
             return new ChatState(
                 state.chats,
                 state.isEndReached,
-                state.selectedChat,
+                state.selectedChatId,
                 state.setWritingMessageToUser(setPendingMessageAction.recipientInfoId, setPendingMessageAction.content),
             )
         case EChatActionTypes.ADD_MESSAGE:
@@ -43,7 +43,7 @@ export const chatReducer = (state: ChatState = initialChatState, action: BaseAct
             return new ChatState(
                 state.insertMessage(addMessageAction.chatId, addMessageAction.message),
                 state.isEndReached,
-                state.selectedChat,
+                state.selectedChatId,
                 state.writingMessagesToUser,
             )
         case EChatActionTypes.UPDATE_MESSAGE:
@@ -51,7 +51,7 @@ export const chatReducer = (state: ChatState = initialChatState, action: BaseAct
             return new ChatState(
                 state.updateMessageState(changeMessageStatusAction.chatId, changeMessageStatusAction.messageId, changeMessageStatusAction.token, changeMessageStatusAction.sentTime, changeMessageStatusAction.status),
                 state.isEndReached,
-                state.selectedChat,
+                state.selectedChatId,
                 state.writingMessagesToUser,
             );
         case EChatActionTypes.UPDATE_CHAT_MESSAGE_STATUS:
@@ -59,7 +59,7 @@ export const chatReducer = (state: ChatState = initialChatState, action: BaseAct
             return new ChatState(
                 state.updateChatMessageStatus(updateChatMessageStatusAction.chatId, updateChatMessageStatusAction.status),
                 state.isEndReached,
-                state.selectedChat,
+                state.selectedChatId,
                 state.writingMessagesToUser,
             )
         default:
