@@ -1,11 +1,14 @@
 import { IChatDispatcher, IChatDispatcherChatToUserIdDoesNotExists } from "../dispatcher/IChatDispatcher";
-import { Chat } from "../model/ChatModel";
+import { IFriendDispatcher } from "../dispatcher/IFriendDispatcher";
+import { Chat, EChatMessageStatus } from "../model/ChatModel";
 import { User } from "../model/UserModel";
 import { ChatState } from "../state/ChatState";
+import { FriendState } from "../state/FriendState";
 
 export class ConversationController {
     constructor(
-        public chatDispatcher: IChatDispatcher
+        public chatDispatcher: IChatDispatcher,
+        public friendDispatcher: IFriendDispatcher,
     ) {
 
     }
@@ -27,6 +30,19 @@ export class ConversationController {
 
     onChatStateChanged(chatState: ChatState) {
 
+    }
+
+    async onSelectedChatChanged(chat: Chat, friendState: FriendState) {
+        if (chat.chatMessageStatus === EChatMessageStatus.NOT_FETCHED) {
+            await this.chatDispatcher.fetchMessagesFromChat(chat.id, async (userInfoId: number): Promise<User> => {
+                if (friendState.doesFriendWithInfoIdExists(chat.id)) {
+                    return friendState.findFriendByInfoId(chat.id);
+                } else {
+                    return this.friendDispatcher.findFriendByUserId(userInfoId);
+                }
+            });
+            this.chatDispatcher.updateChatMessageStatus(chat.id, EChatMessageStatus.FETCHED);
+        }
     }
 
     onTextValueChanged(selectedUserInfoId: number, content: string) {

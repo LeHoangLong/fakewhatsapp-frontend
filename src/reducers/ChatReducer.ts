@@ -1,5 +1,5 @@
 import { BaseAction } from "../actions/BaseActions";
-import { ChatActionAddChat, ChatActionAddMessage, ChatActionUpdateMessage, ChatActionInsertChat, ChatActionSetSelectedChat, ChatActionSetSelectedPendingMessage, EChatActionTypes } from "../actions/ChatActions";
+import { ChatActionAddChat, ChatActionAddMessage, ChatActionUpdateMessage, ChatActionInsertChat, ChatActionSetSelectedChat, ChatActionSetSelectedPendingMessage, EChatActionTypes, ChatActionUpdateChatMessageStatus } from "../actions/ChatActions";
 import { ChatState } from "../state/ChatState";
 
 export const initialChatState: ChatState = new ChatState([], true, null, new Map());
@@ -54,6 +54,14 @@ export const chatReducer = (state: ChatState = initialChatState, action: BaseAct
                 state.selectedChat,
                 state.writingMessagesToUser,
             );
+        case EChatActionTypes.UPDATE_CHAT_MESSAGE_STATUS:
+            let updateChatMessageStatusAction = action as ChatActionUpdateChatMessageStatus;
+            return new ChatState(
+                state.updateChatMessageStatus(updateChatMessageStatusAction.chatId, updateChatMessageStatusAction.status),
+                state.isEndReached,
+                state.selectedChat,
+                state.writingMessagesToUser,
+            )
         default:
             return state;
     }

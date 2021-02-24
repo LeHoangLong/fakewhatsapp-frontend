@@ -1,14 +1,14 @@
 import axios from "axios";
 import { Dispatch } from "react";
 import { BaseAction } from "../actions/BaseActions";
-import { ChatActionAddChat,ChatActionAddMessage,ChatActionUpdateMessage,ChatActionInsertChat, ChatActionSetSelectedChat, ChatActionSetSelectedPendingMessage } from "../actions/ChatActions";
+import { ChatActionAddChat,ChatActionAddMessage,ChatActionUpdateMessage,ChatActionInsertChat, ChatActionSetSelectedChat, ChatActionSetSelectedPendingMessage, ChatActionUpdateChatMessageStatus } from "../actions/ChatActions";
 import { OperationStatusActionSetStatus } from "../actions/OperationStatusActions";
 import { config } from "../config";
-import { Chat } from "../model/ChatModel";
+import { Chat, EChatMessageStatus } from "../model/ChatModel";
 import { EMessageStatus, Message } from "../model/MessageModel";
 import { User } from "../model/UserModel";
 import { BaseOperationStatusDetail, EOperationStatus, EOperationType } from "../state/OperationStatusState";
-import { IChatDispatcher, IChatDispatcherChatToUserIdDoesNotExists } from "./IChatDispatcher";
+import { IChatDispatcher, IChatDispatcherChatToUserIdDoesNotExists, FindUserDelegate } from "./IChatDispatcher";
 import { uuid } from 'uuidv4';
 
 export class ChatDispatcher implements IChatDispatcher {
@@ -38,6 +38,7 @@ export class ChatDispatcher implements IChatDispatcher {
                         resultData.rows[i].latestMessageSentTime,
                         [],
                         [],
+                        EChatMessageStatus.NOT_FETCHED
                     )
                 )
             }
@@ -80,7 +81,8 @@ export class ChatDispatcher implements IChatDispatcher {
                 latestMessageContent,
                 latestMessageSentTime,
                 [thisUserInfoId, userInfoId],
-                []
+                [],
+                EChatMessageStatus.NOT_FETCHED
             )
             this.dispatch(new ChatActionInsertChat(chat).toPlainObject());
             this.dispatch(new OperationStatusActionSetStatus(EOperationType.FETCH_CHAT_TO_USER, EOperationStatus.SUCCESS).toPlainObject());
@@ -143,7 +145,8 @@ export class ChatDispatcher implements IChatDispatcher {
                 resultData.latestMessageContent,
                 resultData.latestMessageSentTime,
                 [thisUserInfoId, otherUserInfoId],
-                []
+                [],
+                EChatMessageStatus.NOT_FETCHED
             );
             this.dispatch(new ChatActionInsertChat(chat).toPlainObject());
             return chat;
@@ -159,5 +162,40 @@ export class ChatDispatcher implements IChatDispatcher {
         } finally {
             this.dispatch(new OperationStatusActionSetStatus(EOperationType.CREATE_CHAT_TO_USER, EOperationStatus.IDLE).toPlainObject());
         }
+    }
+
+    async fetchMessagesFromChat(chatId: number, findUserDelegate: FindUserDelegate): Promise<Message[]> {
+        try {
+            this.dispatch(new OperationStatusActionSetStatus(EOperationType.FETCH_MESSAGES_FROM_CHAT, EOperationStatus.IN_PROGRESS).toPlainObject());
+            let result = await axios.get(`${config.BACKEND_URL}/chats/conversation/${chatId}/messages`);
+            let ret: Message[] = [];
+            let resultRows = result.data.rows;
+            for (let i = 0; i < resultRows.length; i++) {
+                let user = await findUserDelegate(resultRows[i].senderInfoId);
+                let message = new Message(
+                    resultRows[i].id,
+                    resultRows[i].senderInfoId,
+                    user.name,
+                    resultRows[i].content,
+                    resultRows[i].sentTime,
+                    EMessageStatus.SENT,
+                    null,
+                );
+                ret.push(message);
+                this.dispatch(new ChatActionAddMessage(chatId, message).toPlainObject());
+            }
+            this.dispatch(new OperationStatusActionSetStatus(EOperationType.FETCH_MESSAGES_FROM_CHAT, EOperationStatus.SUCCESS).toPlainObject());
+            return ret;
+        } catch (error) {
+            this.dispatch(new OperationStatusActionSetStatus(EOperationType.FETCH_MESSAGES_FROM_CHAT, EOperationStatus.ERROR,
+                new BaseOperationStatusDetail(error.toString())).toPlainObject());
+            throw error;
+        } finally {
+            this.dispatch(new OperationStatusActionSetStatus(EOperationType.FETCH_MESSAGES_FROM_CHAT, EOperationStatus.IDLE).toPlainObject());
+        }
+    }
+    
+    async updateChatMessageStatus(chatId: number, chatMessageStatus: EChatMessageStatus): Promise<void> {
+        this.dispatch(new ChatActionUpdateChatMessageStatus(chatId, chatMessageStatus).toPlainObject());
     }
 }

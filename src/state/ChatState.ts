@@ -1,4 +1,4 @@
-import { Chat } from '../model/ChatModel';
+import { Chat, EChatMessageStatus } from '../model/ChatModel';
 import { EMessageStatus, Message } from '../model/MessageModel';
 export class ChatState {
     constructor(
@@ -45,7 +45,8 @@ export class ChatState {
                 latestMessageContent,
                 latestMessageSentTime,
                 prevChat.participantsId,
-                prevChat.messages.concat([message])
+                prevChat.messages.concat([message]),
+                prevChat.chatMessageStatus,
             )
         }
         return newChats;
@@ -92,6 +93,7 @@ export class ChatState {
                 latestMessageSentTime,
                 prevChat.participantsId,
                 newMessages,
+                prevChat.chatMessageStatus,
             )
         }
         return newChats;
@@ -110,5 +112,22 @@ export class ChatState {
         let newMap = new Map<number, string>(this.writingMessagesToUser);
         newMap.set(userInfoId, content);
         return newMap;
+    }
+
+    updateChatMessageStatus(chatId: number, chatMessageStatus: EChatMessageStatus): Chat[] {
+        let newChats = this.chats.slice();
+        let index = this.chats.findIndex((element) => element.id === chatId);
+        if (index !== -1) {
+            let prevChat = newChats[index];
+            newChats[index] = new Chat(
+                prevChat.id,
+                prevChat.latestMessageContent,
+                prevChat.latestMessageSentTime,
+                prevChat.participantsId,
+                prevChat.messages,
+                chatMessageStatus,
+            );
+        }
+        return newChats;   
     }
 }

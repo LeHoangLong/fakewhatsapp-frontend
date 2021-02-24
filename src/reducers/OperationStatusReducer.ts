@@ -16,6 +16,7 @@ export const initialOperationStatusState: OperationStatusState = {
     [EOperationType.FETCH_CHAT]: initialOperationStatus,
     [EOperationType.FETCH_CHAT_TO_USER]: initialOperationStatus,
     [EOperationType.CREATE_CHAT_TO_USER]: initialOperationStatus,
+    [EOperationType.FETCH_MESSAGES_FROM_CHAT]: initialOperationStatus,
 };
 
 export function operationStatusReducer(state: OperationStatusState, action: BaseAction): OperationStatusState {

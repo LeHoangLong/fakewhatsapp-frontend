@@ -11,6 +11,7 @@ export enum EOperationType {
     FETCH_CHAT = 'FETCH_CHAT',
     FETCH_CHAT_TO_USER = 'FETCH_CHAT_TO_USER',
     CREATE_CHAT_TO_USER = 'CREATE_CHAT_TO_USER',
+    FETCH_MESSAGES_FROM_CHAT = 'FETCH_MESSAGES_FROM_CHAT',
 }
 
 export enum EOperationStatus {
@@ -52,4 +53,5 @@ export interface OperationStatusState {
     readonly [EOperationType.FETCH_CHAT]: OperationStatus;
     readonly [EOperationType.FETCH_CHAT_TO_USER]: OperationStatus;
     readonly [EOperationType.CREATE_CHAT_TO_USER]: OperationStatus;
+    readonly [EOperationType.FETCH_MESSAGES_FROM_CHAT]: OperationStatus;
 }

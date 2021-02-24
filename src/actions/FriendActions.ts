@@ -8,7 +8,7 @@ export const EFriendActionTypes = {
 export class FriendActionAddFriends extends BaseAction {
     constructor(
         public newFriends: readonly User[],
-        public isEndReached: boolean,
+        public isEndReached: boolean | null,
     ) {
         super(EFriendActionTypes.ADD_FRIENDS);
         this.newFriends = newFriends;
