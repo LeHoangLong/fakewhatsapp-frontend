@@ -31,7 +31,8 @@ export class UserDispatcher implements IUserDispatcher {
             this.dispatch(new OperationStatusActionSetStatus(EOperationType.GET_USER_INFO, EOperationStatus.SUCCESS).toPlainObject());
         } catch (error) {
             this.dispatch(new UserActionSetLoginStatus(UserStatus.NOT_LOGGED_IN).toPlainObject());
-            if (!('response' in error) || (error.response.status !== 401 && error.response.status !== 403)) {
+	    console.log(error);
+	    if (( error.response === undefined ) || (error.response.status !== 401 && error.response.status !== 403)) {
                 this.dispatch(new OperationStatusActionSetStatus(EOperationType.GET_USER_INFO, EOperationStatus.ERROR).toPlainObject());
                 throw error;
             }
