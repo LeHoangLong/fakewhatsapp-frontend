@@ -54,8 +54,8 @@ export class UserDispatcher implements IUserDispatcher {
                 this.dispatch(new OperationStatusActionSetStatus(EOperationType.LOG_IN, EOperationStatus.ERROR, new BaseOperationStatusDetail(ELoginErrorDetailMessage.INVALID_CREDENTIALS)).toPlainObject());
             } else {
                 this.dispatch(new OperationStatusActionSetStatus(EOperationType.LOG_IN, EOperationStatus.ERROR, new BaseOperationStatusDetail(ELoginErrorDetailMessage.GENERIC_ERROR)).toPlainObject());
+                throw error;
             }
-            throw error;
         } finally {
             this.dispatch(new OperationStatusActionSetStatus(EOperationType.LOG_IN, EOperationStatus.IDLE).toPlainObject());
         }
@@ -76,8 +76,8 @@ export class UserDispatcher implements IUserDispatcher {
                 this.dispatch(new OperationStatusActionSetStatus(EOperationType.SIGN_UP, EOperationStatus.ERROR, new BaseOperationStatusDetail(ELoginErrorDetailMessage.USERNAME_ALREADY_EXISTS)).toPlainObject());
             } else {
                 this.dispatch(new OperationStatusActionSetStatus(EOperationType.SIGN_UP, EOperationStatus.ERROR, new BaseOperationStatusDetail(ELoginErrorDetailMessage.GENERIC_ERROR)).toPlainObject());
+                throw error;
             }
-            throw error;
         } finally {
             this.dispatch(new OperationStatusActionSetStatus(EOperationType.SIGN_UP, EOperationStatus.IDLE).toPlainObject());
         }
