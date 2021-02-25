@@ -1,8 +1,13 @@
+import { IChatDispatcher } from "../dispatcher/IChatDispatcher";
+import { IFriendDispatcher } from "../dispatcher/IFriendDispatcher";
 import { IInvitationDispatcher } from "../dispatcher/IInvitationDispatcher";
+import { User } from "../model/UserModel";
 
 export class StrangerViewController {
     constructor(
         public dispatcher: IInvitationDispatcher,
+        public chatDispatcher: IChatDispatcher,
+        public friendDispatcher: IFriendDispatcher,
     ) {
 
     }
@@ -19,8 +24,10 @@ export class StrangerViewController {
         this.dispatcher.deleteSentFriendRequestToUser(recipientInfoId);
     }
 
-    onAcceptPendingFriendRequest(senderInfoId: number) { 
-        this.dispatcher.acceptFriendRequestFromUser(senderInfoId);
+    onAcceptPendingFriendRequest(selectdUser: User) { 
+        this.dispatcher.acceptFriendRequestFromUser(selectdUser.infoId);
+        this.chatDispatcher.setSelectedUser(selectdUser);
+        this.friendDispatcher.addFriendIfNotYet(selectdUser);
     }
 
     onRejectPendingFriendRequest(senderInfoId: number) {

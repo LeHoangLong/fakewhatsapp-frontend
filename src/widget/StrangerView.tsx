@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { StrangerViewController } from "../controller/StrangerViewController";
+import { ChatDispatcher } from "../dispatcher/ChatDispatcher";
+import { FriendDispatcher } from "../dispatcher/FriendDispatcher";
 import { InvitationDispatcher } from "../dispatcher/InvitationDispatcher";
 import { User } from "../model/UserModel";
 import { AppState } from "../state/AppState";
@@ -25,7 +27,9 @@ interface MapStateToProps {
 export const StrangerView = ({thisUser, selectedUser}: StrangerViewProps) => {
     let dispatch = useDispatch();
     let invitationDispatcher: InvitationDispatcher = useRef(new InvitationDispatcher(dispatch)).current;
-    let strangerViewController: StrangerViewController = useRef(new StrangerViewController(invitationDispatcher)).current;
+    let chatDispatcher: ChatDispatcher = useRef(new ChatDispatcher(dispatch)).current;
+    let friendDispatcher: FriendDispatcher = useRef(new FriendDispatcher(dispatch)).current;
+    let strangerViewController: StrangerViewController = useRef(new StrangerViewController(invitationDispatcher, chatDispatcher, friendDispatcher)).current;
     let [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
@@ -69,7 +73,7 @@ export const StrangerView = ({thisUser, selectedUser}: StrangerViewProps) => {
                     <button className="reject-button" onClick={() => strangerViewController.onRejectPendingFriendRequest(selectedUser.infoId)}>
                         Reject
                     </button>
-                    <button className="accept-button" onClick={() => strangerViewController.onAcceptPendingFriendRequest(selectedUser.infoId)}>
+                    <button className="accept-button" onClick={() => strangerViewController.onAcceptPendingFriendRequest(selectedUser)}>
                         Accept
                     </button>
                     <div style={{display: isLoading? 'block': 'none'}}>
