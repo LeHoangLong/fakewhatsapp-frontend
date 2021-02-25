@@ -11,5 +11,6 @@ export class ProfileBarController {
     onLogout() {
         cookie.remove('jwt');
         this.userDispatcher.dispatchLogout();
+        window.location.href = '/';
     }
 }
