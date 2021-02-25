@@ -5,7 +5,8 @@
     width: 100%;
     height: 100%;
     flex-direction: column;
-    border-right: 2px $border-color solid;
+    border-right: 1px $border-color solid;
+    box-sizing: border-box;
     .profile-bar-container {
         padding: $p6 $p5;
         background-color: $header-background-color;

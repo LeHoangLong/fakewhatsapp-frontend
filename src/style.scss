@@ -6,8 +6,8 @@ $blue-3: #7adeff;
 
 $grey-1: #aba9a9;
 $grey-2: #EDEDED;
-$grey-3: rgba(237, 237, 237, 0.5);
-$grey-4: #E0e0e0;
+$grey-3: rgba(0, 0, 0, 0.15);
+$grey-4: #E5DDD5;
 $grey-5: #b5b5b5;
 
 $primary-color: $blue-3;
@@ -31,7 +31,7 @@ $secondary-text-color: $grey-5;
 $error-button-color: red;
 $on-error-button-color: white;
 $error-button-pressed-color: #ad0000;
-$secondary-color-2: $shadow-color;
+$secondary-color-2: $grey-4;
 $secondary-color-3: $grey-1;
 
 $input-border-radius: 12px;

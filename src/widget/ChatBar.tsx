@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux"
 import { ChatBarController } from "../controller/ChatBarController";
 import { ChatDispatcher } from "../dispatcher/ChatDispatcher";
+import { FoundUserDispatcher } from "../dispatcher/FoundUserDispatcher";
 import { FriendDispatcher } from "../dispatcher/FriendDispatcher";
 import { Chat } from "../model/ChatModel";
 import { User } from "../model/UserModel";
@@ -10,6 +11,7 @@ import { ChatState } from "../state/ChatState";
 import { FriendState } from "../state/FriendState";
 import { EOperationStatus, OperationStatus } from "../state/OperationStatusState"
 import { LoadingIcon } from "./LoadingIcon";
+import './ChatBar.scss';
 
 interface MapStateToProps {
     fetchChatStatus: OperationStatus,
@@ -28,12 +30,13 @@ export const ChatBar = () => {
     let dispatch = useDispatch();
     let chatDispatcher = useRef(new ChatDispatcher(dispatch)).current;
     let friendDispatcher = useRef(new FriendDispatcher(dispatch)).current;
-    let controller = useRef(new ChatBarController(chatDispatcher, friendDispatcher)).current;
+    let foundUserDispatcher = useRef(new FoundUserDispatcher(dispatch)).current;
+    let controller = useRef(new ChatBarController(chatDispatcher, friendDispatcher, foundUserDispatcher)).current;
     let [isLoading, setisLoading] = useState(true);
 
     useEffect(() => {
-        controller.onFetchChatOperationStatusChanged(fetchChatStatus);
-    }, [controller, fetchChatStatus]);
+        controller.onFetchChatOperationStatusChanged(thisUser, fetchChatStatus);
+    }, [controller, thisUser, fetchChatStatus]);
 
     useEffect(() => {
         if (fetchChatStatus.status === EOperationStatus.IN_PROGRESS) {
@@ -51,6 +54,10 @@ export const ChatBar = () => {
         let ret = [];
         for (let i = 0; i < chatState.chats.length; i++) {
             let chat: Chat = chatState.chats[i];
+            let chatClassName = "chat-summary-container";
+            if (chatState.selectedChatId === chat.id) {
+                chatClassName = "chat-summary-container-selected";
+            }
             let showGroupChatIcon: boolean = chat.isGroupChat;
             let otherUserInfoId: number = -1;
             for (let j = 0; j < chat.participantsId.length; j++) {
@@ -68,13 +75,15 @@ export const ChatBar = () => {
                     let user: User = friendState.findFriendByInfoId(otherUserInfoId);
                     chatTitle = user.name;
                 }
+            } else {
+                chatTitle = chat.name;
             }
             ret.push(
-                <div className="chat-summary-container">
+                <div className={chatClassName} key={chat.id} onClick={() => controller.onChatSelected(chat)}>
                     <div className="icon-container">
                         {(() => {
                             if (showGroupChatIcon) {
-                                return (<i className="fas fa-user"></i>);
+                                return (<i className="fas fa-users"></i>);
                             } else {
                                 if (friendState.doesFriendWithInfoIdExists(otherUserInfoId)){
                                     let friend = friendState.findFriendByInfoId(otherUserInfoId);

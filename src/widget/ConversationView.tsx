@@ -1,11 +1,13 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ConversationController } from "../controller/ConversationController";
 import { ChatDispatcher } from "../dispatcher/ChatDispatcher";
 import { FriendDispatcher } from "../dispatcher/FriendDispatcher";
+import { Chat } from "../model/ChatModel";
 import { User } from "../model/UserModel";
 import { AppState } from "../state/AppState";
 import { ChatState } from "../state/ChatState";
+import { FoundUserState } from "../state/FoundUserState";
 import { FriendState } from "../state/FriendState";
 import './ConversationView.scss';
 
@@ -13,22 +15,20 @@ interface MapStateToProps {
     chatState: ChatState,
     thisUser: User,
     friendState: FriendState,
+    foundUserState: FoundUserState
 }
 
-interface ConversationProps {
-    selectedUser: User,
-}
-
-export const ConversationView = ({selectedUser}: ConversationProps) => {
+export const ConversationView = () => {
     function MapStateToProps(state: AppState): MapStateToProps {
         return {
             chatState: state.chatState,
             thisUser: state.userState.user!,
             friendState: state.friendState,
+            foundUserState: state.foundUserState,
         }
     };
 
-    let {chatState, thisUser, friendState} = useSelector<AppState, MapStateToProps>(MapStateToProps);
+    let {chatState, thisUser, friendState, foundUserState} = useSelector<AppState, MapStateToProps>(MapStateToProps);
 
     let dispatch = useDispatch();
     let inputTextRef = useRef<HTMLInputElement>(null);
@@ -36,6 +36,19 @@ export const ConversationView = ({selectedUser}: ConversationProps) => {
     let friendDispatcher = useRef(new FriendDispatcher(dispatch)).current;
     let controller = useRef(new ConversationController(chatDispatcher, friendDispatcher)).current;
     let previousUserInfoId = useRef<number | null>(null);
+    let [selectedChat, setSelectedChat] = useState<Chat | null>(null);
+    let [selectedUser, setSelectedUser] = useState<User | null>(null);
+
+    useEffect(() => {
+        if (chatState.selectedChatId !== null) {
+            let chat = chatState.findChatById(chatState.selectedChatId);
+            setSelectedChat(chat);
+        } else {
+            setSelectedChat(null);
+        }
+        
+        setSelectedUser(chatState.selectedUser);
+    }, [chatState]);
 
     function showMessages() {
         if (chatState.selectedChatId !== null) {
@@ -80,11 +93,24 @@ export const ConversationView = ({selectedUser}: ConversationProps) => {
     }
 
     function onTextValueChanged(event: React.ChangeEvent<HTMLInputElement>) {
-        controller.onTextValueChanged(selectedUser.infoId, event.target.value);
+        let selectedUser: User | null = chatState.selectedUser;
+        let selectedChat: Chat | null = null;
+        if (chatState.selectedChatId !== null) {
+            selectedChat = chatState.findChatById(chatState.selectedChatId);
+        }
+        controller.onTextValueChanged(selectedUser, selectedChat, event.target.value);
     }
 
+    let textValue: string | undefined;
+    if (chatState.selectedChatId !== null) {
+        selectedChat = chatState.findChatById(chatState.selectedChatId);
+    }
+    if (selectedChat !== null) {
+        textValue = chatState.writingMessagesToChat.get(selectedChat.id);
+    } else if (selectedUser !== null) {
+        textValue = chatState.writingMessagesToUser.get(selectedUser.infoId);
+    }
 
-    let textValue = chatState.writingMessagesToUser.get(selectedUser.infoId);
     if (textValue === undefined) {
         textValue = '';
     }
@@ -97,10 +123,12 @@ export const ConversationView = ({selectedUser}: ConversationProps) => {
     }, [controller, thisUser, chatState, friendState]);
 
     useEffect(() => {
-        if (previousUserInfoId.current !== selectedUser.infoId) {
-            controller.onSelectedUserChanged(thisUser.infoId, selectedUser.infoId, chatState);
+        if (selectedUser !== null) {
+            if (previousUserInfoId.current !== selectedUser.infoId) {
+                controller.onSelectedUserChanged(thisUser.infoId, selectedUser.infoId, chatState);
+            }
+            previousUserInfoId.current = selectedUser.infoId;
         }
-        previousUserInfoId.current = selectedUser.infoId;
     }, [controller, thisUser, selectedUser, chatState]);
 
     useEffect(() => {
@@ -111,14 +139,15 @@ export const ConversationView = ({selectedUser}: ConversationProps) => {
     }, [chatState, controller, friendState, thisUser]);
 
     function onSendButtonClick() {
-        controller.onSendText(chatState.selectedChatId, thisUser, selectedUser.infoId, textValue!);
+        let selectedChat: Chat | null = null;
+        controller.onSendText(selectedChat, thisUser, selectedUser, textValue!);
     }
 
     useEffect(() => {
         let _inputTextRef = inputTextRef.current;
         function onEnterPressed(event: KeyboardEvent) {
             if (event.key === 'Enter') {
-                controller.onSendText(chatState.selectedChatId, thisUser, selectedUser.infoId, textValue!);
+                controller.onSendText(selectedChat, thisUser, selectedUser, textValue!);
             }
         }
 
@@ -126,27 +155,63 @@ export const ConversationView = ({selectedUser}: ConversationProps) => {
             _inputTextRef!.addEventListener("keypress", onEnterPressed, false);
         }
         return () => _inputTextRef?.removeEventListener("keypress", onEnterPressed, false);
-    }, [textValue, chatState, thisUser, selectedUser.infoId, controller]);
+    }, [textValue, thisUser, selectedChat, selectedUser, controller]);
 
-    return (
-        <div className="conversation-view">
-            <div className="header-bar">
+    let chatProfilePicture: JSX.Element = <div></div>;
+    let chatName: string = '';
+    if (selectedChat) {
+        if (!selectedChat.isGroupChat) {
+            let otherUserInfoId: number = -1;
+            for (let i = 0; i < selectedChat.participantsId.length; i++) {
+                if (selectedChat.participantsId[i] !== thisUser.infoId){
+                    otherUserInfoId = selectedChat.participantsId[i];
+                }
+            }
+            // By right, other user info id should be inside our friend list,
+            // Since we only allow non group chat to friend. 
+            let friend = friendState.findFriendByInfoId(otherUserInfoId);
+            chatProfilePicture = (
                 <div className="profile-letter">
-                    { selectedUser.name[0].toUpperCase() }
+                    { friend.name[0].toUpperCase() }
                 </div>
-                <div className="name">
-                    { selectedUser.name }
+            );
+            chatName = friend.name;
+        } else {
+            <div className="profile-letter">
+                <i className="fas fa-users"></i>
+            </div>
+            chatName = selectedChat.name;
+        }
+    } else if (selectedUser) {
+        chatProfilePicture = (
+            <div className="profile-letter">
+                { selectedUser.name[0].toUpperCase() }
+            </div>
+        );
+        chatName = selectedUser.name;
+    }
+
+    if (selectedUser || selectedChat) {
+        return (
+            <div className="conversation-view">
+                <div className="header-bar">
+                    { chatProfilePicture! }
+                    <div className="name">
+                        { chatName }
+                    </div>
+                </div>
+                <div className="messages-container">
+                    { showMessages() }
+                </div>
+                <div className="conversation-view-input-container">
+                    <input value={textValue} onChange={onTextValueChanged} type="text" ref={inputTextRef}></input>
+                    <button className="send-button" onClick={onSendButtonClick}>
+                        <i className="fas fa-paper-plane"></i>
+                    </button>
                 </div>
             </div>
-            <div className="messages-container">
-                { showMessages() }
-            </div>
-            <div className="conversation-view-input-container">
-                <input value={textValue} onChange={onTextValueChanged} type="text" ref={inputTextRef}></input>
-                <button className="send-button" onClick={onSendButtonClick}>
-                    <i className="fas fa-paper-plane"></i>
-                </button>
-            </div>
-        </div>
-    )
+        )
+    } else {
+        return <div></div>
+    }
 }

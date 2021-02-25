@@ -85,4 +85,9 @@ export class FriendDispatcher implements IFriendDispatcher {
         this.dispatch(new FriendActionAddFriends([user], null).toPlainObject());
         return user;
     }
+
+    
+    addFriendIfNotYet(user: User): void {
+        this.dispatch(new FriendActionAddFriends([user], null).toPlainObject());
+    }
 }

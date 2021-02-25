@@ -17,10 +17,8 @@ export const App = () => {
     });
 
     if (userState.status === UserStatus.LOGGED_IN && userState.user !== undefined) {
-        console.log('show main page');
         return <MainPage></MainPage>
     } else {
-        console.log('show login page');
         return <LoginPage></LoginPage>
     }
 }

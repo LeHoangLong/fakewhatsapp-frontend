@@ -1,5 +1,5 @@
 import { BaseAction } from "../actions/BaseActions";
-import { EFoundUserActionTypes, FoundUserActionAddFoundUsers, FoundUserActionUpdateSearchTerm } from "../actions/FoundUserAction";
+import { EFoundUserActionTypes, FoundUserActionAddFoundUsers, FoundUserActionAddUserIfNotYet, FoundUserActionUpdateSearchTerm } from "../actions/FoundUserAction";
 import { FoundUserState } from "../state/FoundUserState"
 
 export const initialFoundUserState: FoundUserState = new FoundUserState('', [], true);
@@ -9,7 +9,7 @@ export const foundUserReducer = (state: FoundUserState = initialFoundUserState, 
             let updateSearchTermAction: FoundUserActionUpdateSearchTerm = action as FoundUserActionUpdateSearchTerm;
             return new FoundUserState(
                 updateSearchTermAction.searchTerm,
-                [],
+                state.allUsers,
                 false,
             );
         case EFoundUserActionTypes.ADD_FOUND_USERS:
@@ -29,6 +29,13 @@ export const foundUserReducer = (state: FoundUserState = initialFoundUserState, 
                 [],
                 false,
             );
+        case EFoundUserActionTypes.ADD_USER_IF_NOT_YET:
+            let addUserIfNotYetAction = action as FoundUserActionAddUserIfNotYet;
+            return new FoundUserState(
+                state.searchName,
+                state.addUsers([addUserIfNotYetAction.foundUsers]),
+                state.isEndReached,
+            )
         default:
             return state;
     }

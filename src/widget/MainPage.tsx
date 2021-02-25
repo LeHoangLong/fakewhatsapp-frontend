@@ -3,8 +3,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { BaseAction } from "../actions/BaseActions";
 import { MainPageController } from "../controller/MainPageController";
 import { UserDispatcher } from "../dispatcher/UserDispatcher";
+import { Chat } from "../model/ChatModel";
 import { User } from "../model/UserModel";
 import { AppState } from "../state/AppState";
+import { ChatState } from "../state/ChatState";
 import { FriendState } from "../state/FriendState";
 import { EOperationStatus, OperationStatus } from "../state/OperationStatusState";
 import { UserState } from "../state/UserState";
@@ -19,6 +21,7 @@ interface MainPageProps {
     getUserInfoOperationStatus: OperationStatus,
     loginOperationStatus: OperationStatus,
     friendState: FriendState,
+    chatState: ChatState
 }
 
 export const MainPage = () => {
@@ -31,9 +34,10 @@ export const MainPage = () => {
             getUserInfoOperationStatus: state.operationStatusState.GET_USER_INFO,
             loginOperationStatus: state.operationStatusState.LOG_IN,
             friendState: state.friendState,
+            chatState: state.chatState,
         }
     }
-    let {userState, getUserInfoOperationStatus, loginOperationStatus, friendState} = useSelector<AppState, MainPageProps>(mapStateToProps);
+    let {userState, getUserInfoOperationStatus, loginOperationStatus, friendState, chatState} = useSelector<AppState, MainPageProps>(mapStateToProps);
     let [isLoading, setIsLoading] = useState(false);
     
     useEffect(() => {
@@ -52,14 +56,15 @@ export const MainPage = () => {
 
     let [showUserInfo, setShowUserInfo] = useState(false);
     let [showConversation, setShowConversation] = useState(false);
-    let [selectedUser, setSelectedUser] = useState<User | null>(null);
-    function onUserSelected(user: User) {
-        setSelectedUser(user);
-    }
+
+
 
     useEffect(() => {
-        if (selectedUser) {
-            if (friendState.doesFriendWithInfoIdExists(selectedUser.infoId)) {
+        if (chatState.selectedChatId !== null) {
+            setShowUserInfo(false);
+            setShowConversation(true);
+        } else if (chatState.selectedUser) {
+            if (friendState.doesFriendWithInfoIdExists(chatState.selectedUser.infoId)) {
                 setShowUserInfo(false);
                 setShowConversation(true);
             } else {
@@ -70,23 +75,20 @@ export const MainPage = () => {
             setShowUserInfo(false);
             setShowConversation(false);
         }
-    }, [friendState, selectedUser]);
+    }, [friendState, chatState.selectedUser, chatState.selectedChatId]);
 
     function showUserInfoOrConversation() {
         if (showUserInfo) {
-            if (selectedUser) {
+            if (chatState.selectedUser) {
                 //this condition by right is always true
                 return (
-                    <StrangerView selectedUser={selectedUser} thisUser={ userState.user! }></StrangerView>
+                    <StrangerView selectedUser={chatState.selectedUser} thisUser={ userState.user! }></StrangerView>
                 )
             }
         } else if (showConversation){
-            if (selectedUser) {
-                //this condition by right is always true
-                return (
-                    <ConversationView selectedUser={selectedUser}></ConversationView>
-                )
-            }
+            return (
+                <ConversationView></ConversationView>
+            )
         }
     }
 
@@ -100,7 +102,7 @@ export const MainPage = () => {
         return (
             <div className="main-page">
                 <div className="friend-bar-container">
-                    <SideBar onUserSelected={onUserSelected}></SideBar>
+                    <SideBar></SideBar>
                 </div>
                 <div className="main-pane">
                     { showUserInfoOrConversation() }

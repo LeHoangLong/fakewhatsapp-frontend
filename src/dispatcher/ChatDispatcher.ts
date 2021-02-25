@@ -1,14 +1,14 @@
 import axios from "axios";
 import { Dispatch } from "react";
 import { BaseAction } from "../actions/BaseActions";
-import { ChatActionAddChat,ChatActionAddMessage,ChatActionUpdateMessage,ChatActionInsertChat, ChatActionSetSelectedChatId, ChatActionSetSelectedPendingMessage, ChatActionUpdateChatMessageStatus } from "../actions/ChatActions";
+import { ChatActionAddChat,ChatActionAddMessage,ChatActionUpdateMessage,ChatActionInsertChat, ChatActionSetSelectedChatId, ChatActionSetSelectedPendingMessageToUser, ChatActionSetSelectedPendingMessageToChat, ChatActionUpdateChatMessageStatus, ChatActionSetSelectedUser } from "../actions/ChatActions";
 import { OperationStatusActionSetStatus } from "../actions/OperationStatusActions";
 import { config } from "../config";
 import { Chat, EChatMessageStatus } from "../model/ChatModel";
 import { EMessageStatus, Message } from "../model/MessageModel";
 import { User } from "../model/UserModel";
 import { BaseOperationStatusDetail, EOperationStatus, EOperationType } from "../state/OperationStatusState";
-import { IChatDispatcher, IChatDispatcherChatToUserIdDoesNotExists, FindUserDelegate } from "./IChatDispatcher";
+import { IChatDispatcher, IChatDispatcherChatToUserIdDoesNotExists, FindUserDelegate, AddUserDelegate } from "./IChatDispatcher";
 import { v4 } from 'uuid';
 
 export class ChatDispatcher implements IChatDispatcher {
@@ -17,7 +17,7 @@ export class ChatDispatcher implements IChatDispatcher {
     ) {
     }
 
-    async fetchRecentChats(offset: number, limit: number): Promise<void> {
+    async fetchRecentChats(offset: number, limit: number, addUserDelegate: AddUserDelegate): Promise<void> {
         try {
             this.dispatch(new OperationStatusActionSetStatus(EOperationType.FETCH_CHAT, EOperationStatus.IN_PROGRESS).toPlainObject());
             let result = await axios.get(`${config.BACKEND_URL}/chats/recent/`, {
@@ -28,18 +28,25 @@ export class ChatDispatcher implements IChatDispatcher {
             });
             let chats: Chat[] = [];
             let resultData = result.data;
-            let isEndReached = resultData.rows.length < limit;
-            for (let i = 0; i < resultData.rows.length; i++) {
+            let isEndReached = resultData.chats.length < limit;
+            for (let i = 0; i < resultData.participants.length; i++) {
+                await addUserDelegate(new User(
+                    resultData.participants[i].name,
+                    resultData.participants[i].userInfoId,
+                ), resultData.participants[i].isFriend);
+            }
+
+            for (let i = 0; i < resultData.chats.length; i++) {
                 chats.push(
                     new Chat(
-                        resultData.rows[i].id,
-                        resultData.rows[i].name,
-                        resultData.rows[i].latestMessageContent,
-                        new Date(resultData.rows[i].latestMessageSentTime),
-                        resultData.rows[i].participantsId,
+                        resultData.chats[i].id,
+                        resultData.chats[i].name,
+                        resultData.chats[i].latestMessageContent,
+                        new Date(resultData.chats[i].latestMessageSentTime),
+                        resultData.chats[i].participantsId,
                         [],
                         EChatMessageStatus.NOT_FETCHED,
-                        resultData.rows[i].isGroupChat,
+                        resultData.chats[i].isGroupChat,
                     )
                 )
             }
@@ -111,9 +118,17 @@ export class ChatDispatcher implements IChatDispatcher {
     setSelectedChatId(chatId: number | null): void {
         this.dispatch(new ChatActionSetSelectedChatId(chatId).toPlainObject());
     }
+    
+    setSelectedUser(user: User): void {
+        this.dispatch(new ChatActionSetSelectedUser(user).toPlainObject());
+    }
 
     setWritingMessageToUser(recipientInfoId: number, content: string): void {
-        this.dispatch(new ChatActionSetSelectedPendingMessage(recipientInfoId, content).toPlainObject());
+        this.dispatch(new ChatActionSetSelectedPendingMessageToUser(recipientInfoId, content).toPlainObject());
+    }
+
+    setWritingMessageToChat(chatId: number, content: string): void {
+        this.dispatch(new ChatActionSetSelectedPendingMessageToChat(chatId, content).toPlainObject());
     }
 
     async sendMessageToChat(sender: User, chatID: number, content: string): Promise<Message> {

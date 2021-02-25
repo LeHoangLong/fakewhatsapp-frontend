@@ -1,16 +1,17 @@
 import { config } from "../config";
+import { IChatDispatcher } from "../dispatcher/IChatDispatcher";
 import { IFoundUserDispatcher } from "../dispatcher/IFoundUserDispatcher";
 import { IFriendDispatcher } from "../dispatcher/IFriendDispatcher";
+import { User } from "../model/UserModel";
 import { FoundUserState } from "../state/FoundUserState";
 import { FriendState } from "../state/FriendState";
 import { EOperationStatus, OperationStatus } from "../state/OperationStatusState";
 
 export class FriendBarController {
-    friendDispatcher: IFriendDispatcher;
-    findUserDispatcher: IFoundUserDispatcher;
-    constructor(friendDispatcher: IFriendDispatcher, findUserDispatcher: IFoundUserDispatcher) {
-        this.friendDispatcher = friendDispatcher;
-        this.findUserDispatcher = findUserDispatcher;
+    constructor(
+        private friendDispatcher: IFriendDispatcher, 
+        private findUserDispatcher: IFoundUserDispatcher,
+        private chatDispatcher: IChatDispatcher) {
     }
 
     private async fetchNewFriends(friendState: FriendState, offset: number, limit: number, fetchFriendOperationStatus: OperationStatus) {
@@ -68,5 +69,9 @@ export class FriendBarController {
         if (fetchFriendOperationStatus.status === EOperationStatus.INIT) {
             this.friendDispatcher.fetchFriends(0, config.DEFAULT_PAGE_SIZE);
         }
+    }
+
+    onUserSelected(selectedUser: User) {
+        this.chatDispatcher.setSelectedUser(selectedUser);
     }
 }

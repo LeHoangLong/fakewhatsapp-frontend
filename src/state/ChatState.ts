@@ -1,5 +1,6 @@
 import { Chat, EChatMessageStatus } from '../model/ChatModel';
 import { EMessageStatus, Message } from '../model/MessageModel';
+import { User } from '../model/UserModel';
 
 export class IChatStateErrorChatIdNotFound {
     constructor(
@@ -22,7 +23,9 @@ export class ChatState {
         public chats: Chat[],
         public isEndReached: boolean,
         public selectedChatId: number | null,
-        public writingMessagesToUser: Map<number, string>
+        public selectedUser: User | null,
+        public writingMessagesToUser: Map<number, string>,
+        public writingMessagesToChat: Map<number, string>,
     ){
 
     }
@@ -157,6 +160,12 @@ export class ChatState {
 
     setWritingMessageToUser(userInfoId: number, content: string): Map<number, string> {
         let newMap = new Map<number, string>(this.writingMessagesToUser);
+        newMap.set(userInfoId, content);
+        return newMap;
+    }
+
+    setWritingMessageToChat(userInfoId: number, content: string): Map<number, string> {
+        let newMap = new Map<number, string>(this.writingMessagesToChat);
         newMap.set(userInfoId, content);
         return newMap;
     }

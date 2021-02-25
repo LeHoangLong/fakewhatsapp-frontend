@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { FriendBarController } from '../controller/FriendBarController';
+import { ChatDispatcher } from '../dispatcher/ChatDispatcher';
 import { FoundUserDispatcher } from '../dispatcher/FoundUserDispatcher';
 import { FriendDispatcher } from '../dispatcher/FriendDispatcher';
 import { User } from '../model/UserModel';
@@ -12,17 +13,17 @@ import './FriendBar.scss'
 import { LoadingIcon } from './LoadingIcon';
 
 interface FriendBarProps {
-    onUserSelected(user: User): void;
     searchName: string,
 }
 
-export const FriendBar = ({onUserSelected, searchName}: FriendBarProps) => {
+export const FriendBar = ({searchName}: FriendBarProps) => {
     let friendListRef = useRef(null);
     let loadingIconRef = useRef(null);
     let dispatch = useDispatch();
     let friendDispatcher: FriendDispatcher = useRef(new FriendDispatcher(dispatch)).current;
     let foundUserDispatcher: FoundUserDispatcher = useRef(new FoundUserDispatcher(dispatch)).current;
-    let controller: FriendBarController = useRef(new FriendBarController(friendDispatcher, foundUserDispatcher)).current;
+    let chatDispatcher: ChatDispatcher = useRef(new ChatDispatcher(dispatch)).current;
+    let controller: FriendBarController = useRef(new FriendBarController(friendDispatcher, foundUserDispatcher, chatDispatcher)).current;
     let [showLoadingIcon, setShowLoadingIcon] = useState(true);
     let [addUserText, setAddUserText] = useState('');
 
@@ -127,7 +128,7 @@ export const FriendBar = ({onUserSelected, searchName}: FriendBarProps) => {
         }
         for (let i = 0; i < friends.length; i++) {
             ret.push(
-                <div key={ friends[i].infoId } className="friend-card" onClick={() => onUserSelected(friends[i])}>
+                <div key={ friends[i].infoId } className="friend-card" onClick={() => controller.onUserSelected(friends[i])}>
                     <div className="profile-letter">
                         { friends[i].name[0].toUpperCase() }
                     </div>
@@ -152,16 +153,19 @@ export const FriendBar = ({onUserSelected, searchName}: FriendBarProps) => {
             )
         }
         for (let i = 0; i < usersToShow.length; i++) {
-            ret.push(
-                <div key={ usersToShow[i].infoId } className="friend-card" onClick={() => onUserSelected(usersToShow[i])}>
-                    <div className="profile-letter">
-                        { usersToShow[i].name[0].toUpperCase() }
+            var re = new RegExp("^" + searchName +".*"); 
+            if (usersToShow[i].name.match(re)) {
+                    ret.push(
+                        <div key={ usersToShow[i].infoId } className="friend-card" onClick={() => controller.onUserSelected(usersToShow[i])}>
+                        <div className="profile-letter">
+                            { usersToShow[i].name[0].toUpperCase() }
+                        </div>
+                        <div className="name">
+                            { usersToShow[i].name }
+                        </div>
                     </div>
-                    <div className="name">
-                        { usersToShow[i].name }
-                    </div>
-                </div>
-            )
+                )
+            }
         }
         return ret;
     }

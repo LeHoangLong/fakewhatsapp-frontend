@@ -6,6 +6,10 @@ import { User } from "../model/UserModel";
 import { ChatState } from "../state/ChatState";
 import { FriendState } from "../state/FriendState";
 
+export class ConversationControllerErrorEitherSelectedChatOrUserMustBeValid {
+
+}
+
 export class ConversationController {
     constructor(
         public chatDispatcher: IChatDispatcher,
@@ -34,10 +38,6 @@ export class ConversationController {
         }
     }
 
-    onChatStateChanged(chatState: ChatState) {
-
-    }
-
     async onSelectedChatChanged(thisUser: User, chat: Chat, friendState: FriendState) {
         if (chat.chatMessageStatus === EChatMessageStatus.NOT_FETCHED) {
             this.chatDispatcher.updateChatMessageStatus(chat.id, EChatMessageStatus.FETCHING);
@@ -54,17 +54,30 @@ export class ConversationController {
         }
     }
 
-    onTextValueChanged(selectedUserInfoId: number, content: string) {
-        this.chatDispatcher.setWritingMessageToUser(selectedUserInfoId, content);
+    onTextValueChanged(selectedUser: User | null, selectedChat: Chat | null, content: string) {
+        if (selectedUser !== null) {
+            this.chatDispatcher.setWritingMessageToUser(selectedUser.infoId, content);
+        }
+        if (selectedChat !== null) {
+            this.chatDispatcher.setWritingMessageToChat(selectedChat.id, content);
+        }
+        if ( selectedChat === null && selectedUser === null) {
+            throw new ConversationControllerErrorEitherSelectedChatOrUserMustBeValid();
+        }
     }
 
-    async onSendText(chatId: number | null, thisUser: User, otherUserInfoId: number, content: string) {
-        if (chatId === null) {
-            let chat = await this.chatDispatcher.createChat(thisUser.infoId, otherUserInfoId);
-            chatId = chat.id;
+    async onSendText(selectedChat: Chat | null, thisUser: User, otherUser: User | null, content: string) {
+        // either selected chat or otheruser must be valid
+        if (selectedChat === null && otherUser !== null) {
+            let chat = await this.chatDispatcher.createChat(thisUser.infoId, otherUser.infoId);
+            await this.chatDispatcher.sendMessageToChat(thisUser, chat.id, content);
+            await this.chatDispatcher.setWritingMessageToUser(otherUser.infoId, '');
+        } else if (selectedChat !== null && otherUser === null) {
+            await this.chatDispatcher.sendMessageToChat(thisUser, selectedChat.id, content);
+            await this.chatDispatcher.setWritingMessageToChat(selectedChat.id, '');
+        } else {
+            throw new ConversationControllerErrorEitherSelectedChatOrUserMustBeValid();
         }
-        await this.chatDispatcher.sendMessageToChat(thisUser, chatId, content);
-        await this.chatDispatcher.setWritingMessageToUser(otherUserInfoId, '');
     }
 
     async onPeriodicMessageFetch(thisUser: User, chatState: ChatState, friendState: FriendState) {

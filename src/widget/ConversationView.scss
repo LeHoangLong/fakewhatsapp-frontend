@@ -90,7 +90,7 @@
             .first-message {
                 &::before {
                     content: "";
-                    border-top: 15px $secondary-color solid;
+                    border-top: 15px white solid;
                     border-bottom: 0px;
                     border-right: 10px transparent solid;
                     border-left: 8px transparent solid;

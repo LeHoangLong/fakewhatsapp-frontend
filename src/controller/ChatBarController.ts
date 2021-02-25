@@ -1,6 +1,7 @@
 import { config } from "../config";
 import { IChatDispatcher } from "../dispatcher/IChatDispatcher";
 import { IFriendDispatcher } from "../dispatcher/IFriendDispatcher";
+import { IFoundUserDispatcher } from "../dispatcher/IFoundUserDispatcher";
 import { Chat } from "../model/ChatModel";
 import { User } from "../model/UserModel";
 import { ChatState } from "../state/ChatState";
@@ -11,13 +12,25 @@ export class ChatBarController {
     constructor(
         private dispatcher: IChatDispatcher,
         private friendDispatcher: IFriendDispatcher,
+        private foundUserDispatcher: IFoundUserDispatcher,
     ) {
 
     }
 
-    onFetchChatOperationStatusChanged(fetchChatOperationStatus: OperationStatus) {
+    async addUserDelegate(user: User, isFriend: boolean) {
+    }
+
+    onFetchChatOperationStatusChanged(thisUser: User, fetchChatOperationStatus: OperationStatus) {
         if (fetchChatOperationStatus.status === EOperationStatus.INIT) {
-            this.dispatcher.fetchRecentChats(0, config.DEFAULT_PAGE_SIZE);
+            this.dispatcher.fetchRecentChats(0, config.DEFAULT_PAGE_SIZE, (user: User, isFriend: boolean) => {
+                if (thisUser.infoId !== user.infoId) {
+                    if (isFriend) {
+                        this.friendDispatcher.addFriendIfNotYet(user);
+                    } else {
+                        this.foundUserDispatcher.addUserIfNotYet(user);
+                    }
+                }
+            });
         }
     }
 
@@ -36,5 +49,9 @@ export class ChatBarController {
                 }
             }
         }
+    }
+
+    onChatSelected(selectedChat: Chat) {
+        this.dispatcher.setSelectedChatId(selectedChat.id);
     }
 }

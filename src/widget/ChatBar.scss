@@ -1,0 +1,40 @@
+@import '../style.scss';
+
+.chat-bar {
+    @include myscrollbar;
+    flex-grow: 1;
+    overflow-y: auto;
+    .chat-summary-container {
+        display: flex;
+        padding: $p5;
+        cursor: pointer;
+        &:hover {
+            background-color: $secondary-color-3;
+        }
+        .icon-container {
+            @include h3;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: $on-header-background-color;
+            border-radius: 50%;
+        }
+        .chat-summary {
+            padding-left: $p5;
+            flex-grow: 1;
+            .chat-title {
+                @include h4;
+                font-weight: bold;
+            }
+            .latest-message-content {
+                @include body-1;
+            }
+        }
+    }
+    .chat-summary-container-selected {
+        @extend .chat-summary-container;
+        background-color: $secondary-color-3;
+    }
+}

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { useSelector } from "react-redux";
+import { Chat } from "../model/ChatModel";
 import { User } from "../model/UserModel"
 import { AppState } from "../state/AppState";
 import { ChatState } from "../state/ChatState";
@@ -10,16 +11,12 @@ import { ProfileBar } from "./ProfileBar";
 import { SearchBar } from "./SearchBar";
 import './SideBar.scss';
 
-interface FriendBarProps {
-    onUserSelected(user: User): void;
-}
-
 interface MapStateToProps {
     chatState: ChatState,
     fetchChatStatus: OperationStatus,
 }
 
-export const SideBar = ({onUserSelected}: FriendBarProps) => {
+export const SideBar = () => {
     let [showChat, setShowChat] = useState(true);
     let [searchName, setSearchName] = useState('');
     function onSearchFriendNameChangeHandler(value: string) {
@@ -52,7 +49,7 @@ export const SideBar = ({onUserSelected}: FriendBarProps) => {
                     if (showChat) {
                         return <ChatBar></ChatBar>
                     } else {
-                        return <FriendBar onUserSelected={onUserSelected} searchName={searchName}></FriendBar>
+                        return <FriendBar searchName={searchName}></FriendBar>
                     }
                 })()}
             </div>

@@ -1,7 +1,7 @@
 import axios from "axios";
 import { Dispatch } from "react";
 import { BaseAction } from "../actions/BaseActions";
-import { FoundUserActionAddFoundUsers, FoundUserActionClearSearchResult, FoundUserActionUpdateSearchTerm } from "../actions/FoundUserAction";
+import { FoundUserActionAddFoundUsers, FoundUserActionAddUserIfNotYet, FoundUserActionClearSearchResult, FoundUserActionUpdateSearchTerm } from "../actions/FoundUserAction";
 import { OperationStatusActionSetStatus } from "../actions/OperationStatusActions";
 import { config } from "../config";
 import { User } from "../model/UserModel";
@@ -58,5 +58,9 @@ export class FoundUserDispatcher implements IFoundUserDispatcher {
 
     clearFindResult(): void {
         this.dispatch(new FoundUserActionClearSearchResult().toPlainObject());
+    }
+
+    addUserIfNotYet(user: User): void {
+        this.dispatch(new FoundUserActionAddUserIfNotYet(user).toPlainObject());
     }
 }
