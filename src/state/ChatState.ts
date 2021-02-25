@@ -84,11 +84,13 @@ export class ChatState {
             this.sortMessages(newMessages);
             newChats[index] = new Chat(
                 prevChat.id,
+                prevChat.name,
                 latestMessageContent,
                 latestMessageSentTime,
                 prevChat.participantsId,
                 newMessages,
                 prevChat.chatMessageStatus,
+                prevChat.isGroupChat,
             )
         }
         return newChats;
@@ -132,11 +134,13 @@ export class ChatState {
             this.sortMessages(newMessages);
             newChats[index] = new Chat(
                 prevChat.id,
+                prevChat.name,
                 latestMessageContent,
                 latestMessageSentTime,
                 prevChat.participantsId,
                 newMessages,
                 prevChat.chatMessageStatus,
+                prevChat.isGroupChat,
             )
         }
         return newChats;
@@ -164,11 +168,13 @@ export class ChatState {
             let prevChat = newChats[index];
             newChats[index] = new Chat(
                 prevChat.id,
+                prevChat.name,
                 prevChat.latestMessageContent,
                 prevChat.latestMessageSentTime,
                 prevChat.participantsId,
                 prevChat.messages,
                 chatMessageStatus,
+                prevChat.isGroupChat,
             );
         }
         return newChats;   

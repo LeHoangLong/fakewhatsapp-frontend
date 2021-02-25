@@ -2,24 +2,33 @@ import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux"
 import { ChatBarController } from "../controller/ChatBarController";
 import { ChatDispatcher } from "../dispatcher/ChatDispatcher";
+import { FriendDispatcher } from "../dispatcher/FriendDispatcher";
+import { Chat } from "../model/ChatModel";
+import { User } from "../model/UserModel";
 import { AppState } from "../state/AppState"
 import { ChatState } from "../state/ChatState";
+import { FriendState } from "../state/FriendState";
 import { EOperationStatus, OperationStatus } from "../state/OperationStatusState"
 import { LoadingIcon } from "./LoadingIcon";
 
 interface MapStateToProps {
     fetchChatStatus: OperationStatus,
-    chatState: ChatState
+    chatState: ChatState,
+    friendState: FriendState,
+    thisUser: User,
 }
 
 export const ChatBar = () => {
-    let {fetchChatStatus} = useSelector<AppState, MapStateToProps>((state: AppState): MapStateToProps => ({
+    let {fetchChatStatus, chatState, friendState, thisUser} = useSelector<AppState, MapStateToProps>((state: AppState): MapStateToProps => ({
         fetchChatStatus: state.operationStatusState.FETCH_CHAT,
         chatState: state.chatState,
+        friendState: state.friendState,
+        thisUser: state.userState.user!,
     }));
     let dispatch = useDispatch();
     let chatDispatcher = useRef(new ChatDispatcher(dispatch)).current;
-    let controller = useRef(new ChatBarController(chatDispatcher)).current;
+    let friendDispatcher = useRef(new FriendDispatcher(dispatch)).current;
+    let controller = useRef(new ChatBarController(chatDispatcher, friendDispatcher)).current;
     let [isLoading, setisLoading] = useState(true);
 
     useEffect(() => {
@@ -34,7 +43,67 @@ export const ChatBar = () => {
         }
     }, [fetchChatStatus]);
 
+    useEffect(() => {
+        controller.onChatStateChanges(thisUser, chatState, friendState);
+    }, [controller, thisUser, chatState, friendState,]);
+
     function showChats() {
+        let ret = [];
+        for (let i = 0; i < chatState.chats.length; i++) {
+            let chat: Chat = chatState.chats[i];
+            let showGroupChatIcon: boolean = chat.isGroupChat;
+            let otherUserInfoId: number = -1;
+            for (let j = 0; j < chat.participantsId.length; j++) {
+                if (chat.participantsId[j] !== thisUser.infoId) {
+                    otherUserInfoId = chat.participantsId[j];
+                    break;
+                }
+            }
+            let chatTitle: string = chat.name;
+            if (!chat.isGroupChat) {
+                // if not group chat, the name will be empty and
+                // we will need to use other user name instead
+                // if we have them in our friend list
+                if (friendState.doesFriendWithInfoIdExists(otherUserInfoId)) {
+                    let user: User = friendState.findFriendByInfoId(otherUserInfoId);
+                    chatTitle = user.name;
+                }
+            }
+            ret.push(
+                <div className="chat-summary-container">
+                    <div className="icon-container">
+                        {(() => {
+                            if (showGroupChatIcon) {
+                                return (<i className="fas fa-user"></i>);
+                            } else {
+                                if (friendState.doesFriendWithInfoIdExists(otherUserInfoId)){
+                                    let friend = friendState.findFriendByInfoId(otherUserInfoId);
+                                    return (
+                                        <div className="profile-letter">
+                                            { friend.name[0].toUpperCase() }
+                                        </div>
+                                    );
+                                } else {
+                                    return (
+                                        <i className="fas fa-user"></i>
+                                    );
+                                }
+                            }
+                        })()}
+                        
+                    </div>
+                    <div className="chat-summary">
+                        <div className="chat-title">
+                            { chatTitle }
+                        </div>
+                        <div className="latest-message-content">
+                            { chat.latestMessageContent }
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+        return ret;
     }
 
     if (isLoading) {
@@ -46,7 +115,6 @@ export const ChatBar = () => {
     } else {
         return (
             <div className="chat-bar">
-                Hello
                 { showChats() }
             </div>
         )

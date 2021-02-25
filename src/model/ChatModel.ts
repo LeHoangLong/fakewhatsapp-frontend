@@ -9,11 +9,13 @@ export enum EChatMessageStatus {
 export class Chat {
     constructor(
         public id: number,
+        public name: string,
         public latestMessageContent: string,
         public latestMessageSentTime: Date,
         public participantsId: number[],
         public messages: Message[],
         public chatMessageStatus: EChatMessageStatus,
+        public isGroupChat: boolean,
     ){
 
     }

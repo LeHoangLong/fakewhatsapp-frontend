@@ -33,11 +33,13 @@ export class ChatDispatcher implements IChatDispatcher {
                 chats.push(
                     new Chat(
                         resultData.rows[i].id,
+                        resultData.rows[i].name,
                         resultData.rows[i].latestMessageContent,
                         new Date(resultData.rows[i].latestMessageSentTime),
+                        resultData.rows[i].participantsId,
                         [],
-                        [],
-                        EChatMessageStatus.NOT_FETCHED
+                        EChatMessageStatus.NOT_FETCHED,
+                        resultData.rows[i].isGroupChat,
                     )
                 )
             }
@@ -77,11 +79,13 @@ export class ChatDispatcher implements IChatDispatcher {
             }
             let chat = new Chat(
                 resultData.id,
+                resultData.name,
                 latestMessageContent,
                 latestMessageSentTime,
                 [thisUserInfoId, userInfoId],
                 [],
-                EChatMessageStatus.NOT_FETCHED
+                EChatMessageStatus.NOT_FETCHED,
+                false,
             )
             this.dispatch(new ChatActionInsertChat(chat).toPlainObject());
             this.dispatch(new OperationStatusActionSetStatus(EOperationType.FETCH_CHAT_TO_USER, EOperationStatus.SUCCESS).toPlainObject());
@@ -141,11 +145,13 @@ export class ChatDispatcher implements IChatDispatcher {
             let resultData = result.data;
             let chat = new Chat(
                 resultData.id,
+                resultData.name,
                 resultData.latestMessageContent,
                 new Date(resultData.latestMessageSentTime),
                 [thisUserInfoId, otherUserInfoId],
                 [],
-                EChatMessageStatus.NOT_FETCHED
+                EChatMessageStatus.NOT_FETCHED,
+                false
             );
             this.dispatch(new ChatActionInsertChat(chat).toPlainObject());
             return chat;
