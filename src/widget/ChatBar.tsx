@@ -27,24 +27,40 @@ export const ChatBar = () => {
         friendState: state.friendState,
         thisUser: state.userState.user!,
     }));
+    let [isInit, setIsInit] = useState(true);
+    let [isLoading, setIsLoading] = useState(true);
     let dispatch = useDispatch();
     let chatDispatcher = useRef(new ChatDispatcher(dispatch)).current;
     let friendDispatcher = useRef(new FriendDispatcher(dispatch)).current;
     let foundUserDispatcher = useRef(new FoundUserDispatcher(dispatch)).current;
     let controller = useRef(new ChatBarController(chatDispatcher, friendDispatcher, foundUserDispatcher)).current;
-    let [isLoading, setisLoading] = useState(true);
+
 
     useEffect(() => {
         controller.onFetchChatOperationStatusChanged(thisUser, fetchChatStatus);
     }, [controller, thisUser, fetchChatStatus]);
 
     useEffect(() => {
-        if (fetchChatStatus.status === EOperationStatus.IN_PROGRESS) {
-            setisLoading(true);
-        } else {
-            setisLoading(false);
+        let interval = setInterval(() => {
+            controller.onPerodicFetchChats(thisUser, fetchChatStatus);
+        }, 1000);
+        return () => clearInterval(interval);
+    }, [fetchChatStatus, thisUser, controller]);
+
+    useEffect(() => {
+        if (fetchChatStatus.status === EOperationStatus.IDLE) {
+            setIsInit(false);
         }
     }, [fetchChatStatus]);
+
+    useEffect(() => {
+        if ((fetchChatStatus.status === EOperationStatus.IN_PROGRESS && isInit) ||
+            fetchChatStatus.status === EOperationStatus.INIT) {
+            setIsLoading(true);
+        } else {
+            setIsLoading(false);
+        }
+    }, [fetchChatStatus, isInit]);
 
     useEffect(() => {
         controller.onChatStateChanges(thisUser, chatState, friendState);
@@ -118,7 +134,7 @@ export const ChatBar = () => {
     if (isLoading) {
         return (
             <div className="chat-bar">
-                <LoadingIcon sizePx={30}></LoadingIcon>
+                <LoadingIcon></LoadingIcon>
             </div>
         );
     } else {

@@ -34,6 +34,20 @@ export class ChatBarController {
         }
     }
 
+    onPerodicFetchChats(thisUser: User, fetchChatOperationStatus: OperationStatus) {
+        if (fetchChatOperationStatus.status === EOperationStatus.IDLE) {
+            this.dispatcher.fetchRecentChats(0, config.DEFAULT_PAGE_SIZE, (user: User, isFriend: boolean) => {
+                if (thisUser.infoId !== user.infoId) {
+                    if (isFriend) {
+                        this.friendDispatcher.addFriendIfNotYet(user);
+                    } else {
+                        this.foundUserDispatcher.addUserIfNotYet(user);
+                    }
+                }
+            });
+        }
+    }
+
     async onChatStateChanges(thisUser: User, chatState: ChatState, friendState: FriendState) {
         // fetch all friend info in each chat
         // since chat state is always changing, we need some way to only fetch user for each chat once

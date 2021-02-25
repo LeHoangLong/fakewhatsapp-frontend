@@ -19,6 +19,7 @@ export class ChatDispatcher implements IChatDispatcher {
 
     async fetchRecentChats(offset: number, limit: number, addUserDelegate: AddUserDelegate): Promise<void> {
         try {
+            console.log('fetching chats');
             this.dispatch(new OperationStatusActionSetStatus(EOperationType.FETCH_CHAT, EOperationStatus.IN_PROGRESS).toPlainObject());
             let result = await axios.get(`${config.BACKEND_URL}/chats/recent/`, {
                 params: {

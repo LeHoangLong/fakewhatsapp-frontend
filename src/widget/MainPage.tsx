@@ -3,8 +3,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { BaseAction } from "../actions/BaseActions";
 import { MainPageController } from "../controller/MainPageController";
 import { UserDispatcher } from "../dispatcher/UserDispatcher";
-import { Chat } from "../model/ChatModel";
-import { User } from "../model/UserModel";
 import { AppState } from "../state/AppState";
 import { ChatState } from "../state/ChatState";
 import { FriendState } from "../state/FriendState";

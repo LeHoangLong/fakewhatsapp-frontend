@@ -69,12 +69,13 @@ export class ConversationController {
     async onSendText(selectedChat: Chat | null, thisUser: User, otherUser: User | null, content: string) {
         // either selected chat or otheruser must be valid
         if (selectedChat === null && otherUser !== null) {
-            let chat = await this.chatDispatcher.createChat(thisUser.infoId, otherUser.infoId);
-            await this.chatDispatcher.sendMessageToChat(thisUser, chat.id, content);
             await this.chatDispatcher.setWritingMessageToUser(otherUser.infoId, '');
+            let chat = await this.chatDispatcher.createChat(thisUser.infoId, otherUser.infoId);
+            this.chatDispatcher.setSelectedChatId(chat.id);
+            await this.chatDispatcher.sendMessageToChat(thisUser, chat.id, content);
         } else if (selectedChat !== null && otherUser === null) {
-            await this.chatDispatcher.sendMessageToChat(thisUser, selectedChat.id, content);
             await this.chatDispatcher.setWritingMessageToChat(selectedChat.id, '');
+            await this.chatDispatcher.sendMessageToChat(thisUser, selectedChat.id, content);
         } else {
             throw new ConversationControllerErrorEitherSelectedChatOrUserMustBeValid();
         }

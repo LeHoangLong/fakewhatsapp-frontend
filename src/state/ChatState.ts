@@ -30,9 +30,51 @@ export class ChatState {
 
     }
 
-    concat(chat: Chat[]): Chat[] {
-        let newChats = this.chats.concat(chat);
+    concat(chats: Chat[]): Chat[] {
+        let newChats = this.chats.slice();
+        for (let i = 0; i < chats.length; i++) {
+            let chat = chats[i];
+            let index = this.chats.findIndex((element) => element.id === chat.id);
+            if (index === -1) {
+                newChats.push(chat);
+            } else {
+                let prevChat = this.chats[index];
+                for (let j = 0; j < prevChat.messages.length; j++) {
+                    let sameMessageFound = false;
+                    for (let k = 0; k < chat.messages.length; k++) {
+                        if (prevChat.messages[j].id === chat.messages[k].id) {
+                            if (chat.messages[k].sentTime < prevChat.messages[j].sentTime) {
+                                chat.messages[k] = prevChat.messages[j];
+                            }
+                            sameMessageFound = true;
+                            break;
+                        }
+                    }
+                    if (!sameMessageFound) {
+                        chat.messages.push(prevChat.messages[j]);
+                    }
+                }
+                let latestMessage = this.findLatestMessage(chat);
+                if (latestMessage !== null) {
+                    chat.latestMessageContent = latestMessage.message;
+                    chat.latestMessageSentTime = latestMessage.sentTime;
+                }
+                newChats[index] = chat;
+            }
+        }
         return newChats.sort((a, b) => -(a.latestMessageSentTime.getTime() - b.latestMessageSentTime.getTime()));
+    }
+
+    findLatestMessage(chat: Chat): Message | null {
+        let latestTime = new Date(0);
+        let ret: Message | null = null;
+        for (let i = 0; i < chat.messages.length; i++) {
+            if (latestTime < chat.messages[i].sentTime) {
+                latestTime = chat.messages[i].sentTime;
+                ret = chat.messages[i];
+            }
+        }
+        return ret;
     }
 
     insertChat(chat: Chat): Chat[] {
@@ -41,6 +83,27 @@ export class ChatState {
         if (index === -1) {
             newChats.push(chat);
         } else {
+            let prevChat = this.chats[index];
+            for (let j = 0; j < prevChat.messages.length; j++) {
+                let sameMessageFound = false;
+                for (let k = 0; k < chat.messages.length; k++) {
+                    if (prevChat.messages[j].id === chat.messages[k].id) {
+                        if (chat.messages[k].sentTime < prevChat.messages[j].sentTime) {
+                            chat.messages[k] = prevChat.messages[j];
+                        }
+                        sameMessageFound = true;
+                        break;
+                    }
+                }
+                if (!sameMessageFound) {
+                    chat.messages.push(prevChat.messages[j]);
+                }
+            }
+            let latestMessage = this.findLatestMessage(chat);
+            if (latestMessage !== null) {
+                chat.latestMessageContent = latestMessage.message;
+                chat.latestMessageSentTime = latestMessage.sentTime;
+            }
             newChats[index] = chat;
         }
         return newChats.sort((a, b) => -(a.latestMessageSentTime.getTime() - b.latestMessageSentTime.getTime()));

@@ -28,7 +28,7 @@ export const ConversationView = () => {
         }
     };
 
-    let {chatState, thisUser, friendState, foundUserState} = useSelector<AppState, MapStateToProps>(MapStateToProps);
+    let {chatState, thisUser, friendState} = useSelector<AppState, MapStateToProps>(MapStateToProps);
 
     let dispatch = useDispatch();
     let inputTextRef = useRef<HTMLInputElement>(null);

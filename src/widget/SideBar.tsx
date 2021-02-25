@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react"
 import { useSelector } from "react-redux";
-import { Chat } from "../model/ChatModel";
-import { User } from "../model/UserModel"
 import { AppState } from "../state/AppState";
 import { ChatState } from "../state/ChatState";
 import { EOperationStatus, OperationStatus } from "../state/OperationStatusState";
